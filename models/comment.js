@@ -6,8 +6,13 @@ const CommentSchema = new Schema({
   parent_post: {type: Schema.Types.ObjectId, ref: 'Post', required: true},
   content: {type: String, required: true},
   reactions: [{
-    type: String,
-    enum: ['Like', 'Love', 'Angry', 'Care', 'Haha', 'Wow', 'Sad']
+    value: {
+      type: String,
+      enum: ['Like', 'Love', 'Angry', 'Care', 'Haha', 'Wow', 'Sad'],
+      required: true,
+      default: 'Like'
+    },
+    author: {type: Schema.Types.ObjectId, required: true, ref: 'User'}
   }],
   date: {type: Date, required: true, default: Date.now},
   replies: [{type: Schema.Types.ObjectId, ref: 'Comment'}]

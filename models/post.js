@@ -6,8 +6,13 @@ const PostSchema = new Schema({
   content: {type: String, required: true},
   comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
   reactions: [{
-    type: String,
-    enum: ['Like', 'Love', 'Angry', 'Care', 'Haha', 'Wow', 'Sad']
+    value: {
+      type: String,
+      enum: ['Like', 'Love', 'Angry', 'Care', 'Haha', 'Wow', 'Sad'],
+      required: true,
+      default: 'Like'
+    },
+    author: {type: Schema.Types.ObjectId, required: true, ref: 'User'}
   }],
   date: {type: Date, required: true, default: Date.now}
 });
