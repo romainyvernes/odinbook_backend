@@ -4,6 +4,10 @@ const User = require('../models/user');
 // POST create new user
 exports.register = (req, res, next) => {
   // check that user is not already registered
+  User.findOne({ username: req.body.username }, (err, user) => {
+    if (err) return next(err);
+    if (user) return res.json({ message: 'User already exists.' });
+  });
   
   // hash password and save new user into DB
   bcrypt.hash(req.body.password, 10, (err, hashed) => {
