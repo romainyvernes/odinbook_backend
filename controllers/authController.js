@@ -1,4 +1,3 @@
-const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
@@ -6,6 +5,7 @@ const User = require('../models/user');
 exports.register = (req, res, next) => {
   // check that user is not already registered
   
+  // hash password and save new user into DB
   bcrypt.hash(req.body.password, 10, (err, hashed) => {
     if (err) return next(err);
     
@@ -14,18 +14,19 @@ exports.register = (req, res, next) => {
       username: req.body.username,
       password: hashed
     }).save((err) => {
-      res.redirect(`/users/${user._id}`);
+      if (err) return next(err);
+      // indicates new user was successfully created
+      res.status(200);
     });
   });
 };
 
 // POST authenticate existing user
-exports.login = passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/'
-});
+exports.login = (req, res, next) => {
+  res.redirect(`/api/users/${req.user.id}`);
+};
 
-// POST log out current user
+// GET log out current user
 exports.logout = (req, res, next) => {
   req.logout();
   res.redirect('/');

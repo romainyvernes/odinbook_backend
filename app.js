@@ -54,12 +54,12 @@ const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
 const commentsRouter = require('./routes/comments');
 
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 // check user is authenticated before allowing access to unprotected routes
 app.use(isAuth()); 
-app.use('/users', usersRouter);
-app.use('/posts', postsRouter);
-app.use('/comments', commentsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/posts', postsRouter);
+app.use('/api/comments', commentsRouter);
 
 // ERRORS
 

@@ -1,10 +1,11 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
-const connection = require('./database');
+// import DB connection
+require('./database');
 const User = require('../models/user');
 
-const verifyCallback = () => {
+const verifyCallback = (username, password, done) => {
   // look for user in database
   User.findOne({ username }, (err, user) => {
     // error accessing the database
@@ -36,3 +37,5 @@ passport.deserializeUser((id, done) => {
     done(err, user);
   });
 });
+
+module.exports = passport;
