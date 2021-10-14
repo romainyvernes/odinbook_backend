@@ -4,12 +4,13 @@ const router = express.Router();
 // import controller
 const authController = require('../controllers/authController');
 
-/* GET log in page. */
-router.get('/', function(req, res, next) {
-  // send log in page
-});
+// POST create new user
+router.post('/register', authController.register);
 
-/*  */
-router.post('/', authController.login);
+// POST authenticate existing user
+router.post('/login', authController.login);
+
+// POST log out current user
+router.post('/logout', authController.logout);
 
 module.exports = router;
