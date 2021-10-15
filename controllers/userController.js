@@ -30,6 +30,7 @@ exports.friend_request_create = (req, res, next) => {
 
 // GET user's homepage with profile info, posts, and their respective comments
 exports.index = (req, res, next) => {
+  // query DB for both user and posts at the same time
   Promise.all([
     User.findById(req.user.id, 'name friends')
         .populate('friends', 'name')
@@ -39,15 +40,28 @@ exports.index = (req, res, next) => {
         .populate('author', 'name')
         .populate({ 
           path: 'comments', 
-          populate: { path: 'author', select: 'name' }
+          populate: [
+            { 
+              path: 'author', 
+              select: 'name' 
+            },
+            { 
+              path: 'reactions',
+              populate: {
+                path: 'author',
+                select: 'name'
+              }
+            }
+          ]
         })
         .populate({ 
           path: 'reactions', 
           populate: { path: 'author', select: 'name' }
         })
-        .exec(),
-    Comment.find({ })
-  ]);
+        .exec()
+  ]).then(([userDoc, postDocs]) => {
+    res.json({ profile_data: userDoc, posts: postDocs });
+  }).catch((err) => next(err));
 };
 
 // GET list of user's friends

@@ -14,6 +14,8 @@ const PostSchema = new Schema(
   }
 );
 
+// retrieves all comments related to a post, whether they are direct comments
+// to the post or comments of comments
 PostSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
