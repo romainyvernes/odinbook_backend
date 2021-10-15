@@ -6,7 +6,7 @@ const Reaction = require('../models/reaction');
 // GET list of incoming friend requests for a given user
 exports.friend_requests_received = (req, res, next) => {
   User.findById(req.user.id, 'friend_requests_received')
-      .populate('friend_requests_received', 'first_name last_name')
+      .populate('friend_requests_received', 'name')
       .exec((err, requests) => {
         if (err) return next(err);
         res.json(requests);
@@ -16,7 +16,7 @@ exports.friend_requests_received = (req, res, next) => {
 // GET list of outgoing friend requests for a given user
 exports.friend_requests_sent = (req, res, next) => {
   User.findById(req.user.id, 'friend_requests_sent')
-      .populate('friend_requests_sent', 'first_name last_name')
+      .populate('friend_requests_sent', 'name')
       .exec((err, requests) => {
         if (err) return next(err);
         res.json(requests);
@@ -31,12 +31,20 @@ exports.friend_request_create = (req, res, next) => {
 // GET user's homepage with profile info, posts, and their respective comments
 exports.index = (req, res, next) => {
   Promise.all([
-    User.findById(req.user.id, 'first_name last_name friends')
-        .populate('friends', 'first_name last_name')
+    User.findById(req.user.id, 'name friends')
+        .populate('friends', 'name')
         .exec(),
     Post.find({ destination_profile: req.user.id })
         .sort('-date')
-        .populate('author', 'first_name last_name')
+        .populate('author', 'name')
+        .populate({ 
+          path: 'comments', 
+          populate: { path: 'author', select: 'name' }
+        })
+        .populate({ 
+          path: 'reactions', 
+          populate: { path: 'author', select: 'name' }
+        })
         .exec(),
     Comment.find({ })
   ]);
