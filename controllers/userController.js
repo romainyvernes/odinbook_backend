@@ -1,102 +1,15 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-
-// GET list of incoming friend requests for a given user
-exports.friend_requests_received = (req, res, next) => {
-  User.findById(req.user.id, 'friend_requests_received')
-      .populate('friend_requests_received', 'name')
-      .exec((err, requests) => {
-        if (err) return next(err);
-        res.json(requests);
-      });
-};
-
-// GET list of outgoing friend requests for a given user
-exports.friend_requests_sent = (req, res, next) => {
-  User.findById(req.user.id, 'friend_requests_sent')
-      .populate('friend_requests_sent', 'name')
-      .exec((err, requests) => {
-        if (err) return next(err);
-        res.json(requests);
-      });
-};
-
-// POST send a friend request
-exports.friend_request_create = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.user.id, 
-      { $push: { friend_requests_sent: req.body.friend_id }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friend_id, 
-      { $push: { friend_requests_received: req.user.id }}
-    ).exec()
-  ]).then((docs) => {
-    res.status(201);
-  }).catch((err) => next(err));
-};
-
-// DELETE cancel friend request
-
-// DELETE decline friend request
-
-// GET list of user's friends
-exports.friends_list = (req, res, next) => {
-  User.findById(req.user.id, 'friends')
-      .populate('friends', 'name')
-      .exec((err, friends) => {
-        if (err) return next(err);
-        res.json(friends);
-      });
-};
-
-// POST add new friend (i.e., accept friend request)
-exports.friends_add = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.user.id, 
-      { 
-        $push: { friends: req.body.friend_id },
-        $pull: { friend_requests_received: req.body.friend_id }
-      }
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friend_id, 
-      { 
-        $push: { friends: req.user.id },
-        $pull: { friend_requests_sent: req.user.id }
-      }
-    ).exec()
-  ]).then((docs) => {
-    res.status(201);
-  }).catch((err) => next(err));
-};
-
-// DELETE delete a friend
-exports.friends_delete = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.user.id, 
-      { $pull: { friends: req.body.friend_id }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friend_id, 
-      { $pull: { friends: req.user.id }}
-    ).exec()
-  ]).then((docs) => {
-    res.status(200);
-  }).catch((err) => next(err));
-};
+const { body, validationResult } = require('express-validator');
 
 // GET user's homepage with profile info, posts, and their respective comments
 exports.index = (req, res, next) => {
   // query DB for both user and posts at the same time
   Promise.all([
-    User.findById(req.user.id, 'name friends')
+    User.findById(req.params.userId, 'name friends')
         .populate('friends', 'name')
         .exec(),
-    Post.find({ destination_profile: req.user.id })
+    Post.find({ destination_profile: req.params.userId })
         .sort('-date')
         .populate('author', 'name')
         .populate({ 
@@ -126,5 +39,105 @@ exports.index = (req, res, next) => {
 };
 
 // PUT update user's account details
+exports.update_account = (req, res, next) => {
+  User.findById(req.params.userId);
+};
 
 // DELETE delete user's account
+exports.delete_account = (req, res, next) => {
+  
+};
+
+// GET list of incoming friend requests for a given user
+exports.friend_requests_received = (req, res, next) => {
+  User.findById(req.params.userId, 'friend_requests_received')
+      .populate('friend_requests_received', 'name')
+      .exec((err, requests) => {
+        if (err) return next(err);
+        res.json(requests);
+      });
+};
+
+// DELETE decline a specific friend request
+exports.decline_friend_request = (req, res, next) => {
+
+};
+
+// GET list of outgoing friend requests for a given user
+exports.friend_requests_sent = (req, res, next) => {
+  User.findById(req.params.userId, 'friend_requests_sent')
+      .populate('friend_requests_sent', 'name')
+      .exec((err, requests) => {
+        if (err) return next(err);
+        res.json(requests);
+      });
+};
+
+// POST send a friend request
+exports.friend_request_create = (req, res, next) => {
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { $push: { friend_requests_sent: req.params.friendId }}
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.body.friendId, 
+      { $push: { friend_requests_received: req.params.userId }}
+    ).exec()
+  ]).then((docs) => {
+    res.status(201);
+  }).catch((err) => next(err));
+};
+
+// DELETE cancel a specific friend request
+exports.cancel_friend_request = (req, res, next) => {
+
+};
+
+// GET list of user's friends
+exports.friends_list = (req, res, next) => {
+  User.findById(req.params.userId, 'friends')
+      .populate('friends', 'name')
+      .exec((err, friends) => {
+        if (err) return next(err);
+        res.json(friends);
+      });
+};
+
+// POST add new friend (i.e., accept friend request)
+exports.friends_add = (req, res, next) => {
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { 
+        $push: { friends: req.body.friendId },
+        $pull: { friend_requests_received: req.body.friendId }
+      }
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.body.friendId, 
+      { 
+        $push: { friends: req.params.userId },
+        $pull: { friend_requests_sent: req.params.userId }
+      }
+    ).exec()
+  ]).then((docs) => {
+    res.status(201);
+  }).catch((err) => next(err));
+};
+
+// DELETE delete a friend
+exports.friends_delete = (req, res, next) => {
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { $pull: { friends: req.body.friendId }}
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.body.friendId, 
+      { $pull: { friends: req.params.userId }}
+    ).exec()
+  ]).then((docs) => {
+    res.status(200);
+  }).catch((err) => next(err));
+};
