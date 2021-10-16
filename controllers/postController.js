@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
+const Reaction = require('../models/reaction');
 
 // GET list of all posts for a given user
 exports.posts_list = (req, res, next) => {
