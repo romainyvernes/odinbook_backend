@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
+const Reaction = require('../models/reaction');
 const { body, validationResult } = require('express-validator');
 
 // GET user's homepage with profile info, posts, and their respective comments
@@ -40,12 +42,23 @@ exports.index = (req, res, next) => {
 
 // PUT update user's account details
 exports.update_account = (req, res, next) => {
-  User.findById(req.params.userId);
+  // figure out which fields were modified before initiating update
+  // TODO
 };
 
 // DELETE delete user's account
 exports.delete_account = (req, res, next) => {
-  
+  Promise.all([
+    User.findByIdAndDelete(req.params.userId).exec(),
+    Post.deleteMany({ $or: [
+      { author: req.params.userId },
+      { destination_profile: req.params.userId }
+    ] }).exec(),
+    Comment.deleteMany({ author: req.params.userId }).exec(),
+    Reaction.deleteMany({ author: req.params.userId }).exec()
+  ]).then(() => {
+    res.status(200);
+  }).catch((err) => next(err));
 };
 
 // GET list of incoming friend requests for a given user
@@ -60,7 +73,18 @@ exports.friend_requests_received = (req, res, next) => {
 
 // DELETE decline a specific friend request
 exports.decline_friend_request = (req, res, next) => {
-
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { $pull: { friend_requests_received: req.params.friendId }}
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.params.friendId, 
+      { $pull: { friend_requests_sent: req.params.userId }}
+    ).exec()
+  ]).then((docs) => {
+    res.status(200);
+  }).catch((err) => next(err));
 };
 
 // GET list of outgoing friend requests for a given user
@@ -78,7 +102,7 @@ exports.friend_request_create = (req, res, next) => {
   Promise.all([
     User.findByIdAndUpdate(
       req.params.userId, 
-      { $push: { friend_requests_sent: req.params.friendId }}
+      { $push: { friend_requests_sent: req.body.friendId }}
     ).exec(),
     User.findByIdAndUpdate(
       req.body.friendId, 
@@ -91,7 +115,18 @@ exports.friend_request_create = (req, res, next) => {
 
 // DELETE cancel a specific friend request
 exports.cancel_friend_request = (req, res, next) => {
-
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { $pull: { friend_requests_sent: req.params.friendId }}
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.params.friendId, 
+      { $pull: { friend_requests_received: req.params.userId }}
+    ).exec()
+  ]).then((docs) => {
+    res.status(200);
+  }).catch((err) => next(err));
 };
 
 // GET list of user's friends
@@ -131,10 +166,10 @@ exports.friends_delete = (req, res, next) => {
   Promise.all([
     User.findByIdAndUpdate(
       req.params.userId, 
-      { $pull: { friends: req.body.friendId }}
+      { $pull: { friends: req.params.friendId }}
     ).exec(),
     User.findByIdAndUpdate(
-      req.body.friendId, 
+      req.params.friendId, 
       { $pull: { friends: req.params.userId }}
     ).exec()
   ]).then((docs) => {
