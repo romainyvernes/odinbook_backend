@@ -1,6 +1,4 @@
-const User = require('../models/user');
 const Post = require('../models/post');
-const Comment = require('../models/comment');
 
 // GET list of all posts on a user's profile
 exports.posts_list = (req, res, next) => {
@@ -50,7 +48,7 @@ exports.posts_add = (req, res, next) => {
 exports.posts_update = (req, res, next) => {
   Post.findByIdAndUpdate(
     req.params.postId, 
-    { content: req.body.content },
+    { content: req.body.text },
     (err, post) => {
       if (err) return next(err);
       // indicates update was successful
