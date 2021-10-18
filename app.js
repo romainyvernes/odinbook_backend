@@ -53,6 +53,7 @@ const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
 const commentsRouter = require('./routes/comments');
+const reactionsRouter = require('./routes/reactions');
 
 app.use('/api/auth', authRouter);
 // check user is authenticated before allowing access to unprotected routes
@@ -60,6 +61,7 @@ app.use(isAuth());
 app.use('/api/users', usersRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
+app.use('/api/reactions', reactionsRouter);
 
 // ERRORS
 

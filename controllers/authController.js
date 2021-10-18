@@ -25,7 +25,7 @@ exports.register = (req, res, next) => {
     if (err) return next(err);
     
     // create new user into DB
-    const user = new User({
+    new User({
       username: req.body.username,
       password: hashed
     }).save((err) => {
