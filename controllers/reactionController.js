@@ -4,12 +4,12 @@ const Reaction = require('../models/reaction');
 exports.reactions_add = (req, res, next) => {
   new Reaction({
     author: req.user.id,
-    parent_id: req.body.parentId,
+    parent_id: req.query.parentId,
     value: req.body.value
   }).save((err) => {
     if (err) return next(err);
     // indicates new post was successfully created
-    res.status(201);
+    res.sendStatus(201);
   });
 };
 
@@ -21,7 +21,7 @@ exports.reactions_update = (req, res, next) => {
     (err, reaction) => {
       if (err) return next(err);
       // indicates update was successful
-      res.status(200);
+      res.sendStatus(200);
     }
   );
 };
@@ -31,6 +31,6 @@ exports.reactions_delete = (req, res, next) => {
   Reaction.findByIdAndDelete(req.params.reactionId, (err) => {
     if (err) return next(err);
     // indicates deletion was successful
-    res.status(200);
+    res.sendStatus(200);
   });
 };

@@ -8,31 +8,31 @@ const { body, validationResult } = require('express-validator');
 exports.index = (req, res, next) => {
   // query DB for both user and posts at the same time
   Promise.all([
-    User.findById(req.params.userId, 'name friends')
-        .populate('friends', 'name')
+    User.findById(req.params.userId, 'last_name first_name friends')
+        .populate('friends', 'last_name first_name name')
         .exec(),
     Post.find({ destination_profile: req.params.userId })
         .sort('-date')
-        .populate('author', 'name')
+        .populate('author', 'last_name first_name name')
         .populate({ 
           path: 'comments', 
           populate: [
             { 
               path: 'author', 
-              select: 'name' 
+              select: 'last_name first_name name' 
             },
             { 
               path: 'reactions',
               populate: {
                 path: 'author',
-                select: 'name'
+                select: 'last_name first_name name'
               }
             }
           ]
         })
         .populate({ 
           path: 'reactions', 
-          populate: { path: 'author', select: 'name' }
+          populate: { path: 'author', select: 'last_name first_name name' }
         })
         .exec()
   ]).then(([userDoc, postDocs]) => {
@@ -57,14 +57,14 @@ exports.delete_account = (req, res, next) => {
     Comment.deleteMany({ author: req.params.userId }).exec(),
     Reaction.deleteMany({ author: req.params.userId }).exec()
   ]).then(() => {
-    res.status(200);
+    res.redirect('/register');
   }).catch((err) => next(err));
 };
 
 // GET list of incoming friend requests for a given user
 exports.friend_requests_received = (req, res, next) => {
-  User.findById(req.params.userId, 'friend_requests_received')
-      .populate('friend_requests_received', 'name')
+  User.findById(req.params.userId, 'last_name first_name friend_requests_received')
+      .populate('friend_requests_received', 'last_name first_name name')
       .exec((err, requests) => {
         if (err) return next(err);
         res.json(requests);
@@ -83,14 +83,14 @@ exports.decline_friend_request = (req, res, next) => {
       { $pull: { friend_requests_sent: req.params.userId }}
     ).exec()
   ]).then((docs) => {
-    res.status(200);
+    res.sendStatus(200);
   }).catch((err) => next(err));
 };
 
 // GET list of outgoing friend requests for a given user
 exports.friend_requests_sent = (req, res, next) => {
-  User.findById(req.params.userId, 'friend_requests_sent')
-      .populate('friend_requests_sent', 'name')
+  User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
+      .populate('friend_requests_sent', 'last_name first_name name')
       .exec((err, requests) => {
         if (err) return next(err);
         res.json(requests);
@@ -109,7 +109,7 @@ exports.friend_request_create = (req, res, next) => {
       { $push: { friend_requests_received: req.params.userId }}
     ).exec()
   ]).then((docs) => {
-    res.status(201);
+    res.sendStatus(201);
   }).catch((err) => next(err));
 };
 
@@ -125,14 +125,14 @@ exports.cancel_friend_request = (req, res, next) => {
       { $pull: { friend_requests_received: req.params.userId }}
     ).exec()
   ]).then((docs) => {
-    res.status(200);
+    res.sendStatus(200);
   }).catch((err) => next(err));
 };
 
 // GET list of user's friends
 exports.friends_list = (req, res, next) => {
-  User.findById(req.params.userId, 'friends')
-      .populate('friends', 'name')
+  User.findById(req.params.userId, 'last_name first_name friends')
+      .populate('friends', 'last_name first_name name')
       .exec((err, friends) => {
         if (err) return next(err);
         res.json(friends);
@@ -157,7 +157,7 @@ exports.friends_add = (req, res, next) => {
       }
     ).exec()
   ]).then((docs) => {
-    res.status(201);
+    res.sendStatus(201);
   }).catch((err) => next(err));
 };
 
@@ -173,6 +173,6 @@ exports.friends_delete = (req, res, next) => {
       { $pull: { friends: req.params.userId }}
     ).exec()
   ]).then((docs) => {
-    res.status(200);
+    res.sendStatus(200);
   }).catch((err) => next(err));
 };

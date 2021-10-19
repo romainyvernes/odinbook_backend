@@ -4,7 +4,7 @@ exports.isAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.redirect('/api/auth/login');
+    res.redirect('/login');
   }
 };
 

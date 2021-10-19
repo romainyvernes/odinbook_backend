@@ -19,10 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // SESSION STORE
-const MongoStore = require('connect-mongo')(session);
-const sessionStore = new MongoStore({
-  mongooseConnection: connection,
-  collection: 'sessions'
+const MongoStore = require('connect-mongo');
+const sessionStore = MongoStore.create({
+  clientPromise: connection,
+  collectionName: 'sessions'
 });
 
 app.use(session({
@@ -57,7 +57,7 @@ const reactionsRouter = require('./routes/reactions');
 
 app.use('/api/auth', authRouter);
 // check user is authenticated before allowing access to unprotected routes
-app.use(isAuth()); 
+app.use(isAuth); 
 app.use('/api/users', usersRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
@@ -76,9 +76,8 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // send error status
+  res.sendStatus(500);
 });
 
 module.exports = app;

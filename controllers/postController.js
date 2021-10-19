@@ -2,28 +2,28 @@ const Post = require('../models/post');
 
 // GET list of all posts on a user's profile
 exports.posts_list = (req, res, next) => {
-  Post.find({ destination_profile: req.user.id })
+  Post.find({ destination_profile: req.query.profileId })
       .sort('-date')
-      .populate('author', 'name')
+      .populate('author', 'last_name first_name name')
       .populate({ 
         path: 'comments', 
         populate: [
           { 
             path: 'author', 
-            select: 'name' 
+            select: 'last_name first_name name' 
           },
           { 
             path: 'reactions',
             populate: {
               path: 'author',
-              select: 'name'
+              select: 'last_name first_name name'
             }
           }
         ]
       })
       .populate({ 
         path: 'reactions', 
-        populate: { path: 'author', select: 'name' }
+        populate: { path: 'author', select: 'last_name first_name name' }
       })
       .exec((err, posts) => {
         if (err) return next(err);
@@ -35,12 +35,12 @@ exports.posts_list = (req, res, next) => {
 exports.posts_add = (req, res, next) => {
   new Post({
     author: req.user.id,
-    destination_profile: req.body.profile_id,
-    content: req.body.text
+    destination_profile: req.query.profileId,
+    content: req.body.content
   }).save((err) => {
     if (err) return next(err);
     // indicates new post was successfully created
-    res.status(201);
+    res.sendStatus(201);
   });
 };
 
@@ -48,11 +48,11 @@ exports.posts_add = (req, res, next) => {
 exports.posts_update = (req, res, next) => {
   Post.findByIdAndUpdate(
     req.params.postId, 
-    { content: req.body.text },
+    { content: req.body.content },
     (err, post) => {
       if (err) return next(err);
       // indicates update was successful
-      res.status(200);
+      res.sendStatus(200);
     }
   );
 };
@@ -62,6 +62,6 @@ exports.posts_delete = (req, res, next) => {
   Post.findByIdAndDelete(req.params.postId, (err) => {
     if (err) return next(err);
     // indicates deletion was successful
-    res.status(200);
+    res.sendStatus(200);
   });
 };

@@ -9,7 +9,7 @@ exports.login = (req, res, next) => {
 // GET log out current user
 exports.logout = (req, res, next) => {
   req.logout();
-  res.redirect('/');
+  res.redirect('/login');
 };
 
 // POST create new user
@@ -25,13 +25,16 @@ exports.register = (req, res, next) => {
     if (err) return next(err);
     
     // create new user into DB
-    new User({
+    User.create({
       username: req.body.username,
-      password: hashed
-    }).save((err) => {
+      password: hashed,
+      first_name: req.body.firstName,
+      last_name: req.body.lastName,
+      email: req.body.email
+    }, (err) => {
       if (err) return next(err);
       // indicates new user was successfully created
-      res.status(201);
+      res.sendStatus(201);
     });
   });
 };
