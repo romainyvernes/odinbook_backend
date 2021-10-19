@@ -4,7 +4,7 @@ const Reaction = require('../models/reaction');
 exports.reactions_add = (req, res, next) => {
   new Reaction({
     author: req.user.id,
-    parent_id: req.query.parentId,
+    parent_id: req.body.parentId,
     value: req.body.value
   }).save((err) => {
     if (err) return next(err);

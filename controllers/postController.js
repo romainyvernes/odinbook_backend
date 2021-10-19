@@ -35,7 +35,7 @@ exports.posts_list = (req, res, next) => {
 exports.posts_add = (req, res, next) => {
   new Post({
     author: req.user.id,
-    destination_profile: req.query.profileId,
+    destination_profile: req.body.profileId,
     content: req.body.content
   }).save((err) => {
     if (err) return next(err);

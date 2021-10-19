@@ -13,21 +13,6 @@ router.put('/:userId', userController.update_account);
 // DELETE delete user's account
 router.delete('/:userId', userController.delete_account);
 
-// GET list of incoming friend requests for a given user
-router.get('/:userId/requests/inbound', userController.friend_requests_received);
-
-// DELETE decline a specific friend request
-router.delete('/:userId/requests/inbound/:friendId', userController.decline_friend_request);
-
-// GET list of outgoing friend requests for a given user
-router.get('/:userId/requests/outbound', userController.friend_requests_sent);
-
-// POST send a friend request
-router.post('/:userId/requests/outbound', userController.friend_request_create);
-
-// DELETE cancel a specific friend request
-router.delete('/:userId/requests/outbound/:friendId', userController.cancel_friend_request);
-
 // GET list of user's friends
 router.get('/:userId/friends', userController.friends_list);
 
@@ -36,5 +21,14 @@ router.post('/:userId/friends', userController.friends_add);
 
 // DELETE delete a friend
 router.delete('/:userId/friends/:friendId', userController.friends_delete);
+
+// GET list of incoming friend requests for a given user
+router.get('/:userId/requests', userController.friend_requests_get);
+
+// POST send a friend request
+router.post('/:userId/requests', userController.friend_request_create);
+
+// DELETE decline a specific friend request
+router.delete('/:userId/requests/:friendId', userController.friend_request_delete);
 
 module.exports = router;

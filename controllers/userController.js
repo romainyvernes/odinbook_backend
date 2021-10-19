@@ -61,74 +61,6 @@ exports.delete_account = (req, res, next) => {
   }).catch((err) => next(err));
 };
 
-// GET list of incoming friend requests for a given user
-exports.friend_requests_received = (req, res, next) => {
-  User.findById(req.params.userId, 'last_name first_name friend_requests_received')
-      .populate('friend_requests_received', 'last_name first_name name')
-      .exec((err, requests) => {
-        if (err) return next(err);
-        res.json(requests);
-      });
-};
-
-// DELETE decline a specific friend request
-exports.decline_friend_request = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.params.userId, 
-      { $pull: { friend_requests_received: req.params.friendId }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.params.friendId, 
-      { $pull: { friend_requests_sent: req.params.userId }}
-    ).exec()
-  ]).then((docs) => {
-    res.sendStatus(200);
-  }).catch((err) => next(err));
-};
-
-// GET list of outgoing friend requests for a given user
-exports.friend_requests_sent = (req, res, next) => {
-  User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
-      .populate('friend_requests_sent', 'last_name first_name name')
-      .exec((err, requests) => {
-        if (err) return next(err);
-        res.json(requests);
-      });
-};
-
-// POST send a friend request
-exports.friend_request_create = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.params.userId, 
-      { $push: { friend_requests_sent: req.body.friendId }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friendId, 
-      { $push: { friend_requests_received: req.params.userId }}
-    ).exec()
-  ]).then((docs) => {
-    res.sendStatus(201);
-  }).catch((err) => next(err));
-};
-
-// DELETE cancel a specific friend request
-exports.cancel_friend_request = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.params.userId, 
-      { $pull: { friend_requests_sent: req.params.friendId }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.params.friendId, 
-      { $pull: { friend_requests_received: req.params.userId }}
-    ).exec()
-  ]).then((docs) => {
-    res.sendStatus(200);
-  }).catch((err) => next(err));
-};
-
 // GET list of user's friends
 exports.friends_list = (req, res, next) => {
   User.findById(req.params.userId, 'last_name first_name friends')
@@ -175,4 +107,79 @@ exports.friends_delete = (req, res, next) => {
   ]).then((docs) => {
     res.sendStatus(200);
   }).catch((err) => next(err));
+};
+
+// GET list of incoming or outgoing friend requests for a given user
+exports.friend_requests_get = (req, res, next) => {
+  if (req.query.received) {
+    User.findById(req.params.userId, 'last_name first_name friend_requests_received')
+        .populate('friend_requests_received', 'last_name first_name name')
+        .exec((err, requests) => {
+          if (err) return next(err);
+          return res.json(requests);
+        });
+  }
+  if (req.query.sent) {
+    User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
+        .populate('friend_requests_sent', 'last_name first_name name')
+        .exec((err, requests) => {
+          if (err) return next(err);
+          return res.json(requests);
+        });
+  }
+  // if query doesn't include info about type of friend requests, send page
+  // not found code
+  res.sendStatus(404);
+};
+
+// POST send a friend request
+exports.friend_request_create = (req, res, next) => {
+  Promise.all([
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      { $push: { friend_requests_sent: req.body.friendId }}
+    ).exec(),
+    User.findByIdAndUpdate(
+      req.body.friendId, 
+      { $push: { friend_requests_received: req.params.userId }}
+    ).exec()
+  ]).then((docs) => {
+    res.sendStatus(201);
+  }).catch((err) => next(err));
+};
+
+// DELETE either decline an incoming friend request or unsend a request
+// previously sent
+exports.friend_request_delete = (req, res, next) => {
+  if (req.query.decline) {
+    return Promise.all([
+      User.findByIdAndUpdate(
+        req.params.userId, 
+        { $pull: { friend_requests_received: req.params.friendId }}
+      ).exec(),
+      User.findByIdAndUpdate(
+        req.params.friendId, 
+        { $pull: { friend_requests_sent: req.params.userId }}
+      ).exec()
+    ]).then((docs) => {
+      res.sendStatus(200);
+    }).catch((err) => next(err));
+  }
+  if (req.query.unsend) {
+    return Promise.all([
+      User.findByIdAndUpdate(
+        req.params.userId, 
+        { $pull: { friend_requests_sent: req.params.friendId }}
+      ).exec(),
+      User.findByIdAndUpdate(
+        req.params.friendId, 
+        { $pull: { friend_requests_received: req.params.userId }}
+      ).exec()
+    ]).then((docs) => {
+      res.sendStatus(200);
+    }).catch((err) => next(err));
+  }
+  // if query doesn't include info about type of friend requests, send page
+  // not found code
+  res.sendStatus(404);
 };

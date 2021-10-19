@@ -4,7 +4,7 @@ const Comment = require('../models/comment');
 exports.comments_add = (req, res, next) => {
   new Comment({
     author: req.user.id,
-    parent_id: req.query.parentId,
+    parent_id: req.body.parentId,
     content: req.body.content
   }).save((err) => {
     if (err) return next(err);
