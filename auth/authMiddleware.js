@@ -1,5 +1,3 @@
-const passport = require('passport');
-
 // import models
 const Post = require('../models/post');
 const Comment = require('../models/comment');
@@ -12,10 +10,6 @@ exports.isAuth = (req, res, next) => {
     res.redirect('/login');
   }
 };
-
-exports.authenticateLocally = passport.authenticate('local', {
-  failureFlash: true
-});
 
 // ensure a user can only access routes pertaining to their own data
 exports.isUser = (req, res, next) => {

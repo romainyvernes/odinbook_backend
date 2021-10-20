@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const authenticateLocally = require('../auth/authMiddleware').authenticateLocally;
 
 // import controller
 const authController = require('../controllers/authController');
@@ -9,7 +8,7 @@ const authController = require('../controllers/authController');
 router.post('/register', authController.register);
 
 // POST authenticate existing user
-router.post('/login', authenticateLocally, authController.login);
+router.post('/login', authController.login);
 
 // GET log out current user
 router.get('/logout', authController.logout);

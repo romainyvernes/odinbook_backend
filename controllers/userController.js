@@ -2,7 +2,9 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reaction = require('../models/reaction');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const handleValidationErrors = require('../errors/errorMiddleware')
+                                  .handleValidationErrors;
 
 // GET user's homepage with profile info, posts, and their respective comments
 exports.index = (req, res, next) => {
@@ -56,33 +58,54 @@ exports.index = (req, res, next) => {
 };
 
 // PUT update user's account details
-exports.update_account = (req, res, next) => {
-  const updateObj = {
-    username: req.body.username !== '' ? req.body.username : undefined,
-    password: req.body.password !== '' ? req.body.password : undefined,
-    email: req.body.email !== '' ? req.body.email : undefined,
-    first_name: req.body.firstName !== '' ? req.body.firstName : undefined,
-    last_name: req.body.lastName !== '' ? req.body.lastName : undefined
-  };
-  User.findByIdAndUpdate(
-    req.params.userId, 
-    updateObj,
-    { new: true },
-    (err, updatedUser) => {
-      if (err) return next(err);
-      // remove sensitive or irrelevant info from user object before sending it
-      // to client
-      const { 
-        password, 
-        friends, 
-        friend_requests_sent, 
-        friend_requests_received,
-        ...sanitizedUser
-      } = updatedUser.toObject();
-      res.status(200).json(sanitizedUser);
-    }
-  );
-};
+exports.update_account = [
+  body('password').trim().escape(),
+  body('email').trim()
+               .isLength({ min: 3 })
+               .escape()
+               .withMessage('Email is required.')
+               .isEmail()
+               .withMessage('Email address is invalid.'),
+  body('firstName').trim()
+                   .notEmpty()
+                   .escape()
+                   .withMessage('First name is required.'),
+  body('lastName').trim()
+                  .notEmpty()
+                  .escape()
+                  .withMessage('Last name is required.'),
+
+  handleValidationErrors,
+
+  (req, res, next) => {
+    const updateObj = {
+      password: req.body.password !== '' ? req.body.password : undefined,
+      email: req.body.email !== '' ? req.body.email : undefined,
+      first_name: req.body.firstName !== '' ? req.body.firstName : undefined,
+      last_name: req.body.lastName !== '' ? req.body.lastName : undefined
+    };
+
+    User.findByIdAndUpdate(
+      req.params.userId, 
+      updateObj,
+      { new: true },
+      (err, updatedUser) => {
+        if (err) return next(err);
+        // remove sensitive or irrelevant info from user object before sending it
+        // to client
+        const { 
+          username,
+          password, 
+          friends, 
+          friend_requests_sent, 
+          friend_requests_received,
+          ...sanitizedUser
+        } = updatedUser.toObject();
+        res.status(200).json(sanitizedUser);
+      }
+    );
+  }
+];
 
 // DELETE delete user's account
 exports.delete_account = (req, res, next) => {
