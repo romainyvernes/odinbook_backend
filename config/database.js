@@ -7,9 +7,6 @@ require('dotenv').config();
 const connectionPromise = mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-}).then(m => m.connection.getClient());
-
-// handle errors while connection is active
-// mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error: '));
+}).then(m => m.connection.getClient()).catch((err) => console.error(err));
 
 module.exports = connectionPromise;

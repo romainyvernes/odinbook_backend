@@ -5,6 +5,7 @@ const CommentSchema = new Schema(
   {
     author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     parent_id: {type: Schema.Types.ObjectId, required: true},
+    destination_profile: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
     content: {type: String, required: true},
     date: {type: Date, required: true, default: Date.now}
   },

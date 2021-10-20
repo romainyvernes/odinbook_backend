@@ -5,7 +5,8 @@ exports.comments_add = (req, res, next) => {
   new Comment({
     author: req.user.id,
     parent_id: req.body.parentId,
-    content: req.body.content
+    content: req.body.content,
+    destination_profile: req.body.profileId
   }).save((err) => {
     if (err) return next(err);
     // indicates new post was successfully created

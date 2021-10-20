@@ -1,34 +1,39 @@
 const express = require('express');
 const router = express.Router();
 
-// import controllers
+// import controller
 const userController = require('../controllers/userController');
 
+// import authentication middleware that prevents a user from accessing other
+// user's data
+const isUser = require('../auth/authMiddleware').isUser;
+
 // GET user's homepage with profile info, posts, and their respective comments
+// or only user's account info if query specified
 router.get('/:userId', userController.index);
 
 // PUT update user's account details
-router.put('/:userId', userController.update_account);
+router.put('/:userId', isUser, userController.update_account);
 
 // DELETE delete user's account
-router.delete('/:userId', userController.delete_account);
+router.delete('/:userId', isUser, userController.delete_account);
 
 // GET list of user's friends
 router.get('/:userId/friends', userController.friends_list);
 
 // POST add new friend (i.e., accept friend request)
-router.post('/:userId/friends', userController.friends_add);
+router.post('/:userId/friends', isUser, userController.friends_add);
 
 // DELETE delete a friend
-router.delete('/:userId/friends/:friendId', userController.friends_delete);
+router.delete('/:userId/friends/:friendId', isUser, userController.friends_delete);
 
 // GET list of incoming friend requests for a given user
-router.get('/:userId/requests', userController.friend_requests_get);
+router.get('/:userId/requests', isUser, userController.friend_requests_get);
 
 // POST send a friend request
-router.post('/:userId/requests', userController.friend_request_create);
+router.post('/:userId/requests', isUser, userController.friend_request_create);
 
 // DELETE decline a specific friend request
-router.delete('/:userId/requests/:friendId', userController.friend_request_delete);
+router.delete('/:userId/requests/:friendId', isUser, userController.friend_request_delete);
 
 module.exports = router;

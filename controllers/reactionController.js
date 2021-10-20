@@ -5,7 +5,8 @@ exports.reactions_add = (req, res, next) => {
   new Reaction({
     author: req.user.id,
     parent_id: req.body.parentId,
-    value: req.body.value
+    value: req.body.value,
+    destination_profile: req.body.profileId
   }).save((err) => {
     if (err) return next(err);
     // indicates new post was successfully created

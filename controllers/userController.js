@@ -6,6 +6,21 @@ const { body, validationResult } = require('express-validator');
 
 // GET user's homepage with profile info, posts, and their respective comments
 exports.index = (req, res, next) => {
+  // if only user's account information is requested
+  if (req.query.accountInfo === 'true') {
+    if (req.params.userId === req.user.id) {
+      return User.findById(
+                   req.params.userId, 
+                   'username email last_name first_name'
+                 )
+                 .exec((err, user) => {
+                   if (err) return next(err);
+                   res.json(user);
+                 });
+    } else {
+      return res.sendStatus(403);
+    }
+  }
   // query DB for both user and posts at the same time
   Promise.all([
     User.findById(req.params.userId, 'last_name first_name friends')
@@ -42,8 +57,31 @@ exports.index = (req, res, next) => {
 
 // PUT update user's account details
 exports.update_account = (req, res, next) => {
-  // figure out which fields were modified before initiating update
-  // TODO
+  const updateObj = {
+    username: req.body.username !== '' ? req.body.username : undefined,
+    password: req.body.password !== '' ? req.body.password : undefined,
+    email: req.body.email !== '' ? req.body.email : undefined,
+    first_name: req.body.firstName !== '' ? req.body.firstName : undefined,
+    last_name: req.body.lastName !== '' ? req.body.lastName : undefined
+  };
+  User.findByIdAndUpdate(
+    req.params.userId, 
+    updateObj,
+    { new: true },
+    (err, updatedUser) => {
+      if (err) return next(err);
+      // remove sensitive or irrelevant info from user object before sending it
+      // to client
+      const { 
+        password, 
+        friends, 
+        friend_requests_sent, 
+        friend_requests_received,
+        ...sanitizedUser
+      } = updatedUser.toObject();
+      res.status(200).json(sanitizedUser);
+    }
+  );
 };
 
 // DELETE delete user's account
@@ -111,20 +149,20 @@ exports.friends_delete = (req, res, next) => {
 
 // GET list of incoming or outgoing friend requests for a given user
 exports.friend_requests_get = (req, res, next) => {
-  if (req.query.received) {
-    User.findById(req.params.userId, 'last_name first_name friend_requests_received')
+  if (req.query.received === 'true') {
+    return User.findById(req.params.userId, 'last_name first_name friend_requests_received')
         .populate('friend_requests_received', 'last_name first_name name')
         .exec((err, requests) => {
           if (err) return next(err);
-          return res.json(requests);
+          res.json(requests);
         });
   }
-  if (req.query.sent) {
-    User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
+  if (req.query.sent === 'true') {
+    return User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
         .populate('friend_requests_sent', 'last_name first_name name')
         .exec((err, requests) => {
           if (err) return next(err);
-          return res.json(requests);
+          res.json(requests);
         });
   }
   // if query doesn't include info about type of friend requests, send page
@@ -151,7 +189,7 @@ exports.friend_request_create = (req, res, next) => {
 // DELETE either decline an incoming friend request or unsend a request
 // previously sent
 exports.friend_request_delete = (req, res, next) => {
-  if (req.query.decline) {
+  if (req.query.decline === 'true') {
     return Promise.all([
       User.findByIdAndUpdate(
         req.params.userId, 
@@ -165,7 +203,7 @@ exports.friend_request_delete = (req, res, next) => {
       res.sendStatus(200);
     }).catch((err) => next(err));
   }
-  if (req.query.unsend) {
+  if (req.query.unsend === 'true') {
     return Promise.all([
       User.findByIdAndUpdate(
         req.params.userId, 
