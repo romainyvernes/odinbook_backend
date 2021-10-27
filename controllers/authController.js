@@ -21,7 +21,10 @@ exports.login = [
   passport.authenticate('local', { failureFlash: true }),
 
   (req, res, next) => {
-    res.redirect(`/api/users/${req.user.id}`);
+    // res.redirect(`/api/users/${req.user.id}`);
+    res.json({
+      username: req.user.username
+    });
   }
 ];
 

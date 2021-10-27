@@ -28,7 +28,7 @@ const sessionStore = MongoStore.create({
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false, // previously set to true
   store: sessionStore,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 // 1 day in milliseconds
