@@ -7,54 +7,63 @@ const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
 
 // GET user's homepage with profile info, posts, and their respective comments
-exports.index = (req, res, next) => {
-  // if only user's account information is requested
-  if (req.query.accountInfo === 'true') {
-    if (req.params.userId === req.user.id) {
-      return User.findById(
-                   req.params.userId, 
-                   'username email last_name first_name'
-                 )
-                 .exec((err, user) => {
-                   if (err) return next(err);
-                   res.json(user);
-                 });
-    } else {
-      return res.sendStatus(403);
-    }
-  }
-  // query DB for both user and posts at the same time
-  Promise.all([
-    User.findById(req.params.userId, 'last_name first_name friends')
-        .populate('friends', 'last_name first_name name')
-        .exec(),
-    Post.find({ destination_profile: req.params.userId })
-        .sort('-date')
-        .populate('author', 'last_name first_name name')
-        .populate({ 
-          path: 'comments', 
-          populate: [
-            { 
-              path: 'author', 
-              select: 'last_name first_name name' 
-            },
-            { 
-              path: 'reactions',
-              populate: {
-                path: 'author',
-                select: 'last_name first_name name'
-              }
-            }
-          ]
-        })
-        .populate({ 
-          path: 'reactions', 
-          populate: { path: 'author', select: 'last_name first_name name' }
-        })
-        .exec()
-  ]).then(([userDoc, postDocs]) => {
-    res.json({ profile_data: userDoc, posts: postDocs });
-  }).catch((err) => next(err));
+exports.index = async (req, res, next) => {
+  // query DB for user info
+  User.findOne({ username: req.params.username })
+      .populate('friends', 'last_name first_name name')
+      .exec((err, user) => {
+        if (err) return next(err);
+
+        // if only user's account information is requested
+        if (req.query.accountInfo === 'true') {
+          // remove sensitive info from user object before sending it to client
+          const {
+            _id,
+            password,
+            ...sanitizedUser
+          } = user.toObject();
+
+          return res.json({ user: sanitizedUser });
+        }
+        
+        // use user ID to retrieve all posts on given user's profile
+        Post.find({ destination_profile: user._id })
+            .sort('-date')
+            .populate('author', 'last_name first_name name')
+            .populate({ 
+              path: 'comments', 
+              populate: [
+                { 
+                  path: 'author', 
+                  select: 'last_name first_name name' 
+                },
+                { 
+                  path: 'reactions',
+                  populate: {
+                    path: 'author',
+                    select: 'last_name first_name name'
+                  }
+                }
+              ]
+            })
+            .populate({ 
+              path: 'reactions', 
+              populate: { path: 'author', select: 'last_name first_name name' }
+            })
+            .exec((err, posts) => {
+              if (err) return next(err);
+
+              // remove sensitive info from user object before sending it to
+              // client
+              const {
+                _id,
+                password,
+                ...sanitizedUser
+              } = user.toObject();
+
+              res.json({ user: sanitizedUser, posts });
+            });
+      });
 };
 
 // PUT update user's account details
@@ -86,49 +95,58 @@ exports.update_account = [
     };
 
     User.findByIdAndUpdate(
-      req.params.userId, 
+      req.user.id, 
       updateObj,
       { new: true },
       (err, updatedUser) => {
         if (err) return next(err);
-        // remove sensitive or irrelevant info from user object before sending it
-        // to client
+
+        // remove sensitive info from user object before sending it to client
         const { 
-          username,
-          password, 
-          friends, 
-          friend_requests_sent, 
-          friend_requests_received,
+          _id,
+          password,
           ...sanitizedUser
         } = updatedUser.toObject();
-        res.status(200).json(sanitizedUser);
+
+        res.status(200).json({ user: sanitizedUser });
       }
     );
   }
 ];
 
-// DELETE delete user's account
+// DELETE delete user's account, posts, comments, and reactions
 exports.delete_account = (req, res, next) => {
   Promise.all([
-    User.findByIdAndDelete(req.params.userId).exec(),
+    User.findByIdAndDelete(req.user.id).exec(),
     Post.deleteMany({ $or: [
-      { author: req.params.userId },
-      { destination_profile: req.params.userId }
+      { author: req.user.id },
+      { destination_profile: req.user.id }
     ] }).exec(),
-    Comment.deleteMany({ author: req.params.userId }).exec(),
-    Reaction.deleteMany({ author: req.params.userId }).exec()
+    Comment.deleteMany({ $or: [
+      { author: req.user.id },
+      { destination_profile: req.user.id }
+    ] }).exec(),
+    Reaction.deleteMany({ $or: [
+      { author: req.user.id },
+      { destination_profile: req.user.id }
+    ] }).exec()
   ]).then(() => {
-    res.redirect('/register');
+    // indicates deletion was successful
+    res.sendStatus(200);
   }).catch((err) => next(err));
 };
 
 // GET list of user's friends
 exports.friends_list = (req, res, next) => {
-  User.findById(req.params.userId, 'last_name first_name friends')
+  User.findOne(
+        { username: req.params.username }, 
+        'last_name first_name friends'
+      )
       .populate('friends', 'last_name first_name name')
       .exec((err, friends) => {
         if (err) return next(err);
-        res.json(friends);
+        
+        res.json({ friends });
       });
 };
 
@@ -136,7 +154,7 @@ exports.friends_list = (req, res, next) => {
 exports.friends_add = (req, res, next) => {
   Promise.all([
     User.findByIdAndUpdate(
-      req.params.userId, 
+      req.user.id, 
       { 
         $push: { friends: req.body.friendId },
         $pull: { friend_requests_received: req.body.friendId }
@@ -145,8 +163,8 @@ exports.friends_add = (req, res, next) => {
     User.findByIdAndUpdate(
       req.body.friendId, 
       { 
-        $push: { friends: req.params.userId },
-        $pull: { friend_requests_sent: req.params.userId }
+        $push: { friends: req.user.id },
+        $pull: { friend_requests_sent: req.user.id }
       }
     ).exec()
   ]).then((docs) => {
@@ -158,12 +176,12 @@ exports.friends_add = (req, res, next) => {
 exports.friends_delete = (req, res, next) => {
   Promise.all([
     User.findByIdAndUpdate(
-      req.params.userId, 
+      req.user.id, 
       { $pull: { friends: req.params.friendId }}
     ).exec(),
     User.findByIdAndUpdate(
       req.params.friendId, 
-      { $pull: { friends: req.params.userId }}
+      { $pull: { friends: req.user.id }}
     ).exec()
   ]).then((docs) => {
     res.sendStatus(200);
@@ -173,20 +191,32 @@ exports.friends_delete = (req, res, next) => {
 // GET list of incoming or outgoing friend requests for a given user
 exports.friend_requests_get = (req, res, next) => {
   if (req.query.received === 'true') {
-    return User.findById(req.params.userId, 'last_name first_name friend_requests_received')
-        .populate('friend_requests_received', 'last_name first_name name')
-        .exec((err, requests) => {
-          if (err) return next(err);
-          res.json(requests);
-        });
+    return User.findById(
+                  req.user.id, 
+                  'last_name first_name friend_requests_received'
+                )
+                .populate(
+                  'friend_requests_received', 
+                  'last_name first_name name'
+                )
+                .exec((err, requests) => {
+                  if (err) return next(err);
+                  res.json({ requests_received: requests});
+                });
   }
   if (req.query.sent === 'true') {
-    return User.findById(req.params.userId, 'last_name first_name friend_requests_sent')
-        .populate('friend_requests_sent', 'last_name first_name name')
-        .exec((err, requests) => {
-          if (err) return next(err);
-          res.json(requests);
-        });
+    return User.findById(
+                  req.user.id, 
+                  'last_name first_name friend_requests_sent'
+                )
+                .populate(
+                  'friend_requests_sent', 
+                  'last_name first_name name'
+                )
+                .exec((err, requests) => {
+                  if (err) return next(err);
+                  res.json({ requests_sent: requests});
+                });
   }
   // if query doesn't include info about type of friend requests, send page
   // not found code
@@ -197,12 +227,12 @@ exports.friend_requests_get = (req, res, next) => {
 exports.friend_request_create = (req, res, next) => {
   Promise.all([
     User.findByIdAndUpdate(
-      req.params.userId, 
+      req.user.id, 
       { $push: { friend_requests_sent: req.body.friendId }}
     ).exec(),
     User.findByIdAndUpdate(
       req.body.friendId, 
-      { $push: { friend_requests_received: req.params.userId }}
+      { $push: { friend_requests_received: req.user.id }}
     ).exec()
   ]).then((docs) => {
     res.sendStatus(201);
@@ -212,29 +242,32 @@ exports.friend_request_create = (req, res, next) => {
 // DELETE either decline an incoming friend request or unsend a request
 // previously sent
 exports.friend_request_delete = (req, res, next) => {
+  // decline an incoming friend request
   if (req.query.decline === 'true') {
     return Promise.all([
-      User.findByIdAndUpdate(
-        req.params.userId, 
+      User.findByIdUpdate(
+        req.user.id, 
         { $pull: { friend_requests_received: req.params.friendId }}
       ).exec(),
       User.findByIdAndUpdate(
         req.params.friendId, 
-        { $pull: { friend_requests_sent: req.params.userId }}
+        { $pull: { friend_requests_sent: req.user.id }}
       ).exec()
     ]).then((docs) => {
       res.sendStatus(200);
     }).catch((err) => next(err));
   }
+
+  // cancel a friend request previously sent
   if (req.query.unsend === 'true') {
     return Promise.all([
       User.findByIdAndUpdate(
-        req.params.userId, 
+        req.user.id, 
         { $pull: { friend_requests_sent: req.params.friendId }}
       ).exec(),
       User.findByIdAndUpdate(
         req.params.friendId, 
-        { $pull: { friend_requests_received: req.params.userId }}
+        { $pull: { friend_requests_received: req.user.id }}
       ).exec()
     ]).then((docs) => {
       res.sendStatus(200);

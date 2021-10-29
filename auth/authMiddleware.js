@@ -13,7 +13,7 @@ exports.isAuth = (req, res, next) => {
 
 // ensure a user can only access routes pertaining to their own data
 exports.isUser = (req, res, next) => {
-  if (req.params.userId && req.params.userId !== req.user.id) {
+  if (req.params.username && req.params.username !== req.user.username) {
     // for routes where userId is used as a parameter to access or edit DB
     res.sendStatus(403);
   } else if (req.params.postId) { // covers routes where postId is used to access DB
