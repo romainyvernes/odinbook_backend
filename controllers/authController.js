@@ -21,7 +21,6 @@ exports.login = [
   passport.authenticate('local', { failureFlash: true }),
 
   (req, res, next) => {
-    // res.redirect(`/api/users/${req.user.id}`);
     res.json({
       username: req.user.username
     });
@@ -31,7 +30,7 @@ exports.login = [
 // GET log out current user
 exports.logout = (req, res, next) => {
   req.logout();
-  res.redirect('/login');
+  res.sendStatus(200);
 };
 
 // POST create new user
@@ -87,3 +86,10 @@ exports.register = [
     });
   }
 ];
+
+// GET check authentication
+exports.verify = (req, res, next) => {
+  // if user gets to this point, they must be authenticated, so the request is
+  // considered successful
+  res.sendStatus(200);
+};
