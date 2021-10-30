@@ -89,7 +89,9 @@ exports.register = [
 
 // GET check authentication
 exports.verify = (req, res, next) => {
-  // if user gets to this point, they must be authenticated, so the request is
-  // considered successful
-  res.sendStatus(200);
+  // if user gets to this point, they must be authenticated and can retrieve
+  // username to maintain seamless experience on client side
+  res.json({
+    username: req.user.username
+  });
 };
