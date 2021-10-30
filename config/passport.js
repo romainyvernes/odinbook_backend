@@ -5,14 +5,14 @@ const bcrypt = require('bcryptjs');
 require('./database');
 const User = require('../models/user');
 
-const verifyCallback = (username, password, done) => {
+const verifyCallback = (email, password, done) => {
   // look for user in database
-  User.findOne({ username }, (err, user) => {
+  User.findOne({ email }, (err, user) => {
     // error accessing the database
     if (err) return done(err);
     // no user found
     if (!user) {
-      return done(null, false, { message: 'Incorrect username.'});
+      return done(null, false, { message: 'Incorrect email.'});
     }
     // hash password and compare it to password hash stored in DB
     bcrypt.compare(password, user.password, (err, res) => {
@@ -25,8 +25,12 @@ const verifyCallback = (username, password, done) => {
   });
 };
 
-// traditional authentication strategy with a username and a password
-const passwordStrategy = new LocalStrategy(verifyCallback);
+// standard authentication strategy with an email (instead of default username)
+// and a password
+const passwordStrategy = new LocalStrategy(
+  { usernameField: 'email'}, 
+  verifyCallback
+);
 
 passport.use(passwordStrategy);
 passport.serializeUser((user, done) => {
