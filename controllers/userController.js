@@ -140,13 +140,13 @@ exports.delete_account = (req, res, next) => {
 exports.friends_list = (req, res, next) => {
   User.findOne(
         { username: req.params.username }, 
-        'last_name first_name friends'
+        'friends'
       )
       .populate('friends', 'last_name first_name name')
-      .exec((err, friends) => {
+      .exec((err, user) => {
         if (err) return next(err);
         
-        res.json({ friends });
+        res.json({ friends: user.friends });
       });
 };
 
@@ -191,31 +191,27 @@ exports.friends_delete = (req, res, next) => {
 // GET list of incoming or outgoing friend requests for a given user
 exports.friend_requests_get = (req, res, next) => {
   if (req.query.received === 'true') {
-    return User.findById(
-                  req.user.id, 
-                  'last_name first_name friend_requests_received'
-                )
+    return User.findById(req.user.id, 'friend_requests_received')
                 .populate(
                   'friend_requests_received', 
                   'last_name first_name name'
                 )
-                .exec((err, requests) => {
+                .exec((err, user) => {
                   if (err) return next(err);
-                  res.json({ requests_received: requests});
+                  res.json({ 
+                    requests_received: user.friend_requests_received
+                  });
                 });
   }
   if (req.query.sent === 'true') {
-    return User.findById(
-                  req.user.id, 
-                  'last_name first_name friend_requests_sent'
-                )
+    return User.findById(req.user.id, 'friend_requests_sent')
                 .populate(
                   'friend_requests_sent', 
                   'last_name first_name name'
                 )
-                .exec((err, requests) => {
+                .exec((err, user) => {
                   if (err) return next(err);
-                  res.json({ requests_sent: requests});
+                  res.json({ requests_sent: user.friend_requests_sent });
                 });
   }
   // if query doesn't include info about type of friend requests, send page
