@@ -142,7 +142,7 @@ exports.friends_list = (req, res, next) => {
         { username: req.params.username }, 
         'friends'
       )
-      .populate('friends', 'last_name first_name name')
+      .populate('friends', 'last_name first_name name username')
       .exec((err, user) => {
         if (err) return next(err);
         
