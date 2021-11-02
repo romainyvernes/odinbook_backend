@@ -4,35 +4,56 @@ const { body } = require('express-validator');
 const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
 
-// GET list of all posts on a user's profile
+// GET list of all posts on a user's profile or all recent posts
 exports.posts_list = (req, res, next) => {
-  Post.find({ destination_profile: req.query.profileId })
-      .sort('-date')
-      .populate('author', 'last_name first_name name')
-      .populate({ 
-        path: 'comments', 
-        populate: [
-          { 
-            path: 'author', 
-            select: 'last_name first_name name' 
-          },
-          { 
-            path: 'reactions',
-            populate: {
-              path: 'author',
-              select: 'last_name first_name name'
-            }
-          }
-        ]
-      })
-      .populate({ 
-        path: 'reactions', 
-        populate: { path: 'author', select: 'last_name first_name name' }
-      })
-      .exec((err, posts) => {
-        if (err) return next(err);
-        res.json(posts);
-      });
+  let postQuery = null;
+
+  // posts on the user's profile whose profileId is provided
+  if (req.query.profileId === 'true') {
+    postQuery = Post.find({ destination_profile: req.query.profileId })
+                    .sort('-date');
+      
+  }
+
+  // latest 100 posts added to DB.
+  // NOTE: if postQuery is not null, it implies a value was assigned to it in
+  // the above query which gives the profileId query precedence
+  if (!postQuery && req.query.recent === 'true') {
+    postQuery = Post.find({})
+                    .sort('-date')
+                    .limit(50);
+  }
+
+  // if postQuery is still null at this time, no query was provided in route
+  if (!postQuery) {
+    return res.sendStatus(404);
+  }
+
+  postQuery.populate('author', 'last_name first_name name')
+            .populate({ 
+              path: 'comments', 
+              populate: [
+                { 
+                  path: 'author', 
+                  select: 'last_name first_name name' 
+                },
+                { 
+                  path: 'reactions',
+                  populate: {
+                    path: 'author',
+                    select: 'last_name first_name name'
+                  }
+                }
+              ]
+            })
+            .populate({ 
+              path: 'reactions', 
+              populate: { path: 'author', select: 'last_name first_name name' }
+            })
+            .exec((err, posts) => {
+              if (err) return next(err);
+              res.json(posts);
+            });
 };
 
 // POST add a new post
