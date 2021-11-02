@@ -190,33 +190,35 @@ exports.friends_delete = (req, res, next) => {
 
 // GET list of incoming or outgoing friend requests for a given user
 exports.friend_requests_get = (req, res, next) => {
-  if (req.query.received === 'true') {
-    return User.findById(req.user.id, 'friend_requests_received')
-                .populate(
-                  'friend_requests_received', 
-                  'last_name first_name name'
-                )
-                .exec((err, user) => {
-                  if (err) return next(err);
-                  res.json({ 
-                    requests_received: user.friend_requests_received
-                  });
-                });
+  // if no query info was provided in route, return "not found" response
+  if (req.query.received !== 'true' && req.query.sent !== 'true') {
+    return res.sendStatus(404);
   }
-  if (req.query.sent === 'true') {
-    return User.findById(req.user.id, 'friend_requests_sent')
-                .populate(
-                  'friend_requests_sent', 
-                  'last_name first_name name'
-                )
-                .exec((err, user) => {
-                  if (err) return next(err);
-                  res.json({ requests_sent: user.friend_requests_sent });
-                });
-  }
-  // if query doesn't include info about type of friend requests, send page
-  // not found code
-  res.sendStatus(404);
+  
+  User.findById(req.user.id, 'friend_requests_received friend_requests_sent')
+      .populate(
+        'friend_requests_received', 
+        'last_name first_name name'
+      )
+      .populate(
+        'friend_requests_sent', 
+        'last_name first_name name'
+      )
+      .exec((err, user) => {
+        if (err) return next(err);
+
+        const returnObj = {};
+
+        if (req.query.received === 'true') {
+          returnObj.friend_requests_received = user.friend_requests_received;
+        }
+
+        if (req.query.sent === 'true') {
+          returnObj.friend_requests_sent = user.friend_requests_sent;
+        }
+
+        res.json(returnObj);
+      });
 };
 
 // POST send a friend request
