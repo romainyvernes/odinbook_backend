@@ -10,7 +10,7 @@ const handleValidationErrors = require('../errors/errorMiddleware')
 exports.index = async (req, res, next) => {
   // query DB for user info
   User.findOne({ username: req.params.username })
-      .populate('friends', 'last_name first_name name')
+      .populate('friends', 'last_name first_name name username')
       .exec((err, user) => {
         if (err) return next(err);
 
