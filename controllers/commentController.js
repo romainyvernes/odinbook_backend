@@ -11,6 +11,10 @@ exports.comments_add = [
                   .notEmpty()
                   .escape()
                   .withMessage('Parent ID must be provided.'),
+  body('parentId').trim()
+                  .notEmpty()
+                  .escape()
+                  .withMessage('Parent ID must be provided.'),
   body('profileId').trim()
                    .notEmpty()
                    .escape()
@@ -42,16 +46,17 @@ exports.comments_add = [
           });
         }
 
-        // create new comment
-        new Comment({
+        const newComment = new Comment({
           author: req.user.id,
           parent_id: req.body.parentId,
           content: req.body.content,
           destination_profile: req.body.profileId
-        }).save((err) => {
+        })
+        
+        newComment.save((err) => {
           if (err) return next(err);
           // indicates new post was successfully created
-          res.sendStatus(201);
+          res.status(201).json(newComment);
         });
       }).catch((err) => next(err));
     });
@@ -71,10 +76,11 @@ exports.comments_update = [
     Comment.findByIdAndUpdate(
       req.params.commentId, 
       { content: req.body.content },
-      (err, comment) => {
+      { new: true },
+      (err, updatedComment) => {
         if (err) return next(err);
         // indicates update was successful
-        res.sendStatus(200);
+        res.json(updatedComment);
       }
     );
   }

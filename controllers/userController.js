@@ -29,26 +29,29 @@ exports.index = async (req, res, next) => {
         // use user ID to retrieve all posts on given user's profile
         Post.find({ destination_profile: user._id })
             .sort('-date')
-            .populate('author', 'last_name first_name name')
+            .populate('author', 'last_name first_name name username')
             .populate({ 
               path: 'comments', 
               populate: [
                 { 
                   path: 'author', 
-                  select: 'last_name first_name name' 
+                  select: 'last_name first_name name username' 
                 },
                 { 
                   path: 'reactions',
                   populate: {
                     path: 'author',
-                    select: 'last_name first_name name'
+                    select: 'last_name first_name name username'
                   }
+                },
+                {
+                  path: 'replies'
                 }
               ]
             })
             .populate({ 
               path: 'reactions', 
-              populate: { path: 'author', select: 'last_name first_name name' }
+              populate: { path: 'author', select: 'last_name first_name name username' }
             })
             .exec((err, posts) => {
               if (err) return next(err);
@@ -145,8 +148,8 @@ exports.friends_list = (req, res, next) => {
       .populate('friends', 'last_name first_name name username')
       .exec((err, user) => {
         if (err) return next(err);
-        
-        res.json({ friends: user.friends });
+        console.log(user)
+        res.json(user.friends);
       });
 };
 
@@ -198,11 +201,11 @@ exports.friend_requests_get = (req, res, next) => {
   User.findById(req.user.id, 'friend_requests_received friend_requests_sent')
       .populate(
         'friend_requests_received', 
-        'last_name first_name name'
+        'last_name first_name name username'
       )
       .populate(
         'friend_requests_sent', 
-        'last_name first_name name'
+        'last_name first_name name username'
       )
       .exec((err, user) => {
         if (err) return next(err);

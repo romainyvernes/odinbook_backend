@@ -7,10 +7,10 @@ const handleValidationErrors = require('../errors/errorMiddleware')
 
 // POST authenticate existing user
 exports.login = [
-  body('username').trim()
+  body('email').trim()
                   .notEmpty()
                   .escape()
-                  .withMessage('Username is required.'),
+                  .withMessage('Email address is required.'),
   body('password').trim()
                   .notEmpty()
                   .escape()
@@ -46,7 +46,7 @@ exports.register = [
   body('email').trim()
                .isLength({ min: 3 })
                .escape()
-               .withMessage('Email is required.')
+               .withMessage('Email address is required.')
                .isEmail()
                .withMessage('Email address is invalid.'),
   body('firstName').trim()

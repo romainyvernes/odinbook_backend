@@ -44,16 +44,17 @@ exports.reactions_add = [
           });
         }
 
-        // create new reaction
-        new Reaction({
+        const newReaction = new Reaction({
           author: req.user.id,
           parent_id: req.body.parentId,
           value: req.body.value,
           destination_profile: req.body.profileId
-        }).save((err) => {
+        });
+        
+        newReaction.save((err) => {
           if (err) return next(err);
           // indicates new reaction was successfully created
-          res.sendStatus(201);
+          res.status(201).json(newReaction);
         });
       }).catch((err) => next(err));
     });
@@ -71,10 +72,11 @@ exports.reactions_update = [
     Reaction.findByIdAndUpdate(
       req.params.reactionId, 
       { value: req.body.value },
-      (err, reaction) => {
+      { new: true },
+      (err, updatedReaction) => {
         if (err) return next(err);
         // indicates update was successful
-        res.sendStatus(200);
+        res.json(updatedReaction);
       }
     );
   }

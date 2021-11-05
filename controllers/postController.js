@@ -29,26 +29,29 @@ exports.posts_list = (req, res, next) => {
     return res.sendStatus(404);
   }
 
-  postQuery.populate('author', 'last_name first_name name')
+  postQuery.populate('author', 'last_name first_name name username')
             .populate({ 
               path: 'comments', 
               populate: [
                 { 
                   path: 'author', 
-                  select: 'last_name first_name name' 
+                  select: 'last_name first_name name username' 
                 },
                 { 
                   path: 'reactions',
                   populate: {
                     path: 'author',
-                    select: 'last_name first_name name'
+                    select: 'last_name first_name name username'
                   }
+                },
+                {
+                  path: 'replies'
                 }
               ]
             })
             .populate({ 
               path: 'reactions', 
-              populate: { path: 'author', select: 'last_name first_name name' }
+              populate: { path: 'author', select: 'last_name first_name name username' }
             })
             .exec((err, posts) => {
               if (err) return next(err);
@@ -77,15 +80,16 @@ exports.posts_add = [
         return res.json({ message: 'Profile ID does not match a user.' });
       }
 
-      // create a new post and save it to DB
-      new Post({
+      const newPost = new Post({
         author: req.user.id,
         destination_profile: req.body.profileId,
         content: req.body.content
-      }).save((err) => {
+      })
+      
+      newPost.save((err) => {
         if (err) return next(err);
         // indicates new post was successfully created
-        res.sendStatus(201);
+        res.status(201).json(newPost);
       });
     });
   }
@@ -104,10 +108,11 @@ exports.posts_update = [
     Post.findByIdAndUpdate(
       req.params.postId, 
       { content: req.body.content },
-      (err, post) => {
+      { new: true },
+      (err, updatedPost) => {
         if (err) return next(err);
         // indicates update was successful
-        res.sendStatus(200);
+        res.json(updatedPost);
       }
     );
   }
