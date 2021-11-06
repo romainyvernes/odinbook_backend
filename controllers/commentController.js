@@ -11,10 +11,10 @@ exports.comments_add = [
                   .notEmpty()
                   .escape()
                   .withMessage('Parent ID must be provided.'),
-  body('parentId').trim()
-                  .notEmpty()
-                  .escape()
-                  .withMessage('Parent ID must be provided.'),
+  body('postId').trim()
+                .notEmpty()
+                .escape()
+                .withMessage('Post ID must be provided.'),
   body('profileId').trim()
                    .notEmpty()
                    .escape()
@@ -49,14 +49,28 @@ exports.comments_add = [
         const newComment = new Comment({
           author: req.user.id,
           parent_id: req.body.parentId,
+          post_id: req.body.postId,
           content: req.body.content,
           destination_profile: req.body.profileId
         })
         
         newComment.save((err) => {
           if (err) return next(err);
-          // indicates new post was successfully created
-          res.status(201).json(newComment);
+
+          newComment.populate([
+            { path: 'author', select: 'last_name first_name name username' },
+            { 
+              path: 'reactions',
+              populate: {
+                path: 'author',
+                select: 'last_name first_name name username'
+              }
+            },
+            { path: 'replies' }
+          ]).then((populatedComment) => {
+            // indicates new post was successfully created
+            res.status(201).json(populatedComment);
+          });
         });
       }).catch((err) => next(err));
     });
