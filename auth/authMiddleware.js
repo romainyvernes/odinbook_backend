@@ -21,7 +21,8 @@ exports.isUser = (req, res, next) => {
     Post.findById(req.params.postId, (err, post) => {
       if (err) return next(err);
       if (
-           post.destination_profile != req.user.id 
+           post
+        && post.destination_profile != req.user.id 
         && post.author != req.user.id
       ) {
         // access is not allowed if the user is neither the author of the post
@@ -35,7 +36,8 @@ exports.isUser = (req, res, next) => {
     Comment.findById(req.params.commentId, (err, comment) => {
       if (err) return next(err);
       if (
-           comment.destination_profile != req.user.id 
+           comment
+        && comment.destination_profile != req.user.id 
         && comment.author != req.user.id
       ) {
         // access is not allowed if the user is neither the author of the comment
@@ -48,7 +50,7 @@ exports.isUser = (req, res, next) => {
     // for routes where reactionId is used as a parameter to access or edit DB
     Reaction.findById(req.params.reactionId, (err, reaction) => {
       if (err) return next(err);
-      if (reaction.author != req.user.id) {
+      if (reaction && reaction.author != req.user.id) {
         // access is not allowed if the user is not the author of the reaction 
         return res.sendStatus(403);
       }

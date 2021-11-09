@@ -53,8 +53,12 @@ exports.reactions_add = [
         
         newReaction.save((err) => {
           if (err) return next(err);
-          // indicates new reaction was successfully created
-          res.status(201).json(newReaction);
+
+          newReaction.populate('author', 'last_name first_name name username')
+                      .then((populatedReaction) => {
+                        // indicates new reaction was successfully created
+                        res.status(201).json(populatedReaction);
+                      });
         });
       }).catch((err) => next(err));
     });

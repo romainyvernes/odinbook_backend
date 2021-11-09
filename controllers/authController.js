@@ -22,7 +22,8 @@ exports.login = [
 
   (req, res, next) => {
     res.json({
-      username: req.user.username
+      username: req.user.username,
+      id: req.user.id
     });
   }
 ];
@@ -100,6 +101,7 @@ exports.verify = (req, res, next) => {
   // if user gets to this point, they must be authenticated and can retrieve
   // username to maintain seamless experience on client side
   res.json({
-    username: req.user.username
+    username: req.user.username,
+    id: req.user.id
   });
 };
