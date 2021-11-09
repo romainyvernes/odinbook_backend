@@ -8,6 +8,9 @@ const commentController = require('../controllers/commentController');
 // user's data
 const isUser = require('../auth/authMiddleware').isUser;
 
+// GET retrieve comments matching a certain parent comment
+router.get('/', commentController.comments_get);
+
 // POST add a new comment for a given post
 router.post('/', commentController.comments_add);
 

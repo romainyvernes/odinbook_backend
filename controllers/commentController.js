@@ -5,6 +5,29 @@ const { body } = require('express-validator');
 const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
 
+// GET retrieve comments matching a certain parent comment
+exports.comments_get = (req, res, next) => {
+  if (req.query.parentId) {
+    return Comment.find({ parent_id: req.query.parentId })
+                  .populate('author', 'last_name first_name name username')
+                  .populate('replies')
+                  .populate({ 
+                    path: 'reactions',
+                    populate: {
+                      path: 'author',
+                      select: 'last_name first_name name username'
+                    }
+                  })
+                  .exec((err, comments) => {
+                    if (err) return next(err);
+
+                    res.json(comments);
+                  });
+  }
+
+  res.sendStatus(404);
+};
+
 // POST add a new comment for a given post
 exports.comments_add = [
   body('parentId').trim()
