@@ -23,7 +23,8 @@ exports.login = [
   (req, res, next) => {
     res.json({
       username: req.user.username,
-      id: req.user.id
+      id: req.user.id,
+      name: req.user.name
     });
   }
 ];
@@ -102,6 +103,7 @@ exports.verify = (req, res, next) => {
   // username to maintain seamless experience on client side
   res.json({
     username: req.user.username,
-    id: req.user.id
+    id: req.user.id,
+    name: req.user.name
   });
 };

@@ -1,5 +1,7 @@
 const Post = require('../models/post');
 const User = require('../models/user');
+const Comment = require('../models/comment');
+const Reaction = require('../models/reaction');
 const { body } = require('express-validator');
 const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
@@ -88,8 +90,14 @@ exports.posts_add = [
       
       newPost.save((err) => {
         if (err) return next(err);
-        // indicates new post was successfully created
-        res.status(201).json(newPost);
+
+        newPost.populate([
+          { path: 'author', select: 'last_name first_name name username' },
+          { path: 'reactions' }
+        ]).then((populatedPost) => {
+          // indicates new post was successfully created
+          res.status(201).json(populatedPost);
+        })
       });
     });
   }
@@ -120,9 +128,12 @@ exports.posts_update = [
 
 // DELETE delete a post
 exports.posts_delete = (req, res, next) => {
-  Post.findByIdAndDelete(req.params.postId, (err) => {
-    if (err) return next(err);
+  Promise.all([
+    Post.findByIdAndDelete(req.params.postId).exec(),
+    Comment.deleteMany({ parent_id: req.params.postId }).exec(),
+    Reaction.deleteMany({ parent_id: req.params.postId }).exec()
+  ]).then(() => {
     // indicates deletion was successful
     res.sendStatus(200);
-  });
+  }).catch((err) => next(err));
 };

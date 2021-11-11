@@ -1,6 +1,7 @@
 const Comment = require('../models/comment');
 const User = require('../models/user');
 const Post = require('../models/post');
+const Reaction = require('../models/reaction');
 const { body } = require('express-validator');
 const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
@@ -125,9 +126,12 @@ exports.comments_update = [
 
 // DELETE delete a comment
 exports.comments_delete = (req, res, next) => {
-  Comment.findByIdAndDelete(req.params.commentId, (err) => {
-    if (err) return next(err);
+  Promise.all([
+    Comment.findByIdAndDelete(req.params.commentId).exec(),
+    Comment.deleteMany({ parent_id: req.params.commentId }).exec(),
+    Reaction.deleteMany({ parent_id: req.params.commentId }).exec()
+  ]).then(() => {
     // indicates deletion was successful
     res.sendStatus(200);
-  });
+  }).catch((err) => next(err));
 };

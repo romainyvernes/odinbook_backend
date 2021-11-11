@@ -59,7 +59,6 @@ exports.index = async (req, res, next) => {
               // remove sensitive info from user object before sending it to
               // client
               const {
-                _id,
                 password,
                 ...sanitizedUser
               } = user.toObject();
@@ -106,12 +105,11 @@ exports.update_account = [
 
         // remove sensitive info from user object before sending it to client
         const { 
-          _id,
           password,
           ...sanitizedUser
         } = updatedUser.toObject();
 
-        res.status(200).json({ user: sanitizedUser });
+        res.status(200).json(sanitizedUser);
       }
     );
   }
