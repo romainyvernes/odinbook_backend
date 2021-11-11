@@ -55,6 +55,7 @@ exports.posts_list = (req, res, next) => {
               path: 'reactions', 
               populate: { path: 'author', select: 'last_name first_name name username' }
             })
+            .populate('destination_profile', 'last_name first_name name username')
             .exec((err, posts) => {
               if (err) return next(err);
               res.json(posts);
@@ -93,7 +94,8 @@ exports.posts_add = [
 
         newPost.populate([
           { path: 'author', select: 'last_name first_name name username' },
-          { path: 'reactions' }
+          { path: 'reactions' },
+          { path: 'destination_profile', select: 'last_name first_name name username' }
         ]).then((populatedPost) => {
           // indicates new post was successfully created
           res.status(201).json(populatedPost);
