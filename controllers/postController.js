@@ -21,7 +21,14 @@ exports.posts_list = (req, res, next) => {
   // NOTE: if postQuery is not null, it implies a value was assigned to it in
   // the above query which gives the profileId query precedence
   if (!postQuery && req.query.recent === 'true') {
-    postQuery = Post.find({})
+    postQuery = Post.find({ 
+                      $expr: {
+                        $eq: [
+                          '$author',
+                          '$destination_profile'
+                        ]
+                      }
+                    })
                     .sort('-date')
                     .limit(50);
   }

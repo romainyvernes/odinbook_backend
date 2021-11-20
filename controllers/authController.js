@@ -21,10 +21,21 @@ exports.login = [
   passport.authenticate('local', { failureFlash: true }),
 
   (req, res, next) => {
+    const {
+      username,
+      id,
+      name,
+      friend_requests_sent,
+      friend_requests_received,
+      ...rest
+    } = req.user;
+    
     res.json({
-      username: req.user.username,
-      id: req.user.id,
-      name: req.user.name
+      username,
+      id,
+      name,
+      incomingFriendRequests: friend_requests_received,
+      outgoingFriendRequests: friend_requests_sent
     });
   }
 ];
@@ -101,9 +112,20 @@ exports.register = [
 exports.verify = (req, res, next) => {
   // if user gets to this point, they must be authenticated and can retrieve
   // username to maintain seamless experience on client side
+  const {
+    username,
+    id,
+    name,
+    friend_requests_sent,
+    friend_requests_received,
+    ...rest
+  } = req.user;
+  
   res.json({
-    username: req.user.username,
-    id: req.user.id,
-    name: req.user.name
+    username,
+    id,
+    name,
+    incomingFriendRequests: friend_requests_received,
+    outgoingFriendRequests: friend_requests_sent
   });
 };
