@@ -18,7 +18,6 @@ exports.index = async (req, res, next) => {
         if (req.query.accountInfo === 'true') {
           // remove sensitive info from user object before sending it to client
           const {
-            _id,
             password,
             ...sanitizedUser
           } = user.toObject();
@@ -147,31 +146,53 @@ exports.friends_list = (req, res, next) => {
       .populate('friends', 'last_name first_name name username')
       .exec((err, user) => {
         if (err) return next(err);
-        console.log(user)
         res.json(user.friends);
       });
 };
 
 // POST add new friend (i.e., accept friend request)
 exports.friends_add = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.user.id, 
-      { 
-        $push: { friends: req.body.friendId },
-        $pull: { friend_requests_received: req.body.friendId }
-      }
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friendId, 
-      { 
-        $push: { friends: req.user.id },
-        $pull: { friend_requests_sent: req.user.id }
-      }
-    ).exec()
-  ]).then((docs) => {
-    res.sendStatus(201);
-  }).catch((err) => next(err));
+  // check first if the friend being added is not already a friend
+  User.findOne({ id_: req.user.id, friends: req.body.friendId })
+      .exec((err, user) => {
+        if (err) return next(err);
+        if (user) return res.status(409).json("Users are already friends.");
+
+        // proceed to update both authenticated user and friend
+        Promise.all([
+          User.findByIdAndUpdate(
+            req.user.id, 
+            { 
+              $push: { friends: req.body.friendId },
+              $pull: { friend_requests_received: req.body.friendId }
+            },
+            { new: true }
+          ).exec(),
+          User.findByIdAndUpdate(
+            req.body.friendId, 
+            { 
+              $push: { friends: req.user.id },
+              $pull: { friend_requests_sent: req.user.id }
+            },
+            { new: true }
+          ).exec()
+        ]).then(([updatedAuthenticatedUser, updatedFriend]) => {
+          const { 
+            userPassword,
+            ...sanitizedUser
+          } = updatedAuthenticatedUser.toObject();
+          
+          const { 
+            friendPassword,
+            ...sanitizedFriend
+          } = updatedFriend.toObject();
+      
+          res.status(201).json({
+            user: sanitizedUser,
+            friend: sanitizedFriend
+          });
+        }).catch((err) => next(err));
+      });
 };
 
 // DELETE delete a friend
@@ -225,18 +246,32 @@ exports.friend_requests_get = (req, res, next) => {
 
 // POST send a friend request
 exports.friend_request_create = (req, res, next) => {
-  Promise.all([
-    User.findByIdAndUpdate(
-      req.user.id, 
-      { $push: { friend_requests_sent: req.body.friendId }}
-    ).exec(),
-    User.findByIdAndUpdate(
-      req.body.friendId, 
-      { $push: { friend_requests_received: req.user.id }}
-    ).exec()
-  ]).then((docs) => {
-    res.sendStatus(201);
-  }).catch((err) => next(err));
+  // check first if the friend being added is not already a friend
+  User.findOne({ id_: req.user.id, friend_requests_sent: req.body.friendId })
+      .exec((err, user) => {
+        if (err) return next(err);
+        if (user) return res.status(409).json("Friend request already sent.");
+
+        Promise.all([
+          User.findByIdAndUpdate(
+            req.user.id, 
+            { $push: { friend_requests_sent: req.body.friendId }},
+            { new: true }
+          ).exec(),
+          User.findByIdAndUpdate(
+            req.body.friendId, 
+            { $push: { friend_requests_received: req.user.id }},
+            { new: true }
+          ).exec()
+        ]).then(([updatedAuthenticatedUser, updatedFriend]) => {
+          const { 
+            password,
+            ...sanitizedUser
+          } = updatedFriend.toObject();
+      
+          res.status(201).json(sanitizedUser);
+        }).catch((err) => next(err));
+      });
 };
 
 // DELETE either decline an incoming friend request or unsend a request

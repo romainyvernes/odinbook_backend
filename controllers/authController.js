@@ -27,6 +27,7 @@ exports.login = [
       name,
       friend_requests_sent,
       friend_requests_received,
+      friends,
       ...rest
     } = req.user;
     
@@ -35,7 +36,8 @@ exports.login = [
       id,
       name,
       incomingFriendRequests: friend_requests_received,
-      outgoingFriendRequests: friend_requests_sent
+      outgoingFriendRequests: friend_requests_sent,
+      friends,
     });
   }
 ];
@@ -118,6 +120,7 @@ exports.verify = (req, res, next) => {
     name,
     friend_requests_sent,
     friend_requests_received,
+    friends,
     ...rest
   } = req.user;
   
@@ -126,6 +129,7 @@ exports.verify = (req, res, next) => {
     id,
     name,
     incomingFriendRequests: friend_requests_received,
-    outgoingFriendRequests: friend_requests_sent
+    outgoingFriendRequests: friend_requests_sent,
+    friends,
   });
 };
