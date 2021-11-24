@@ -177,19 +177,15 @@ exports.friends_add = (req, res, next) => {
             { new: true }
           ).exec()
         ]).then(([updatedAuthenticatedUser, updatedFriend]) => {
-          const { 
-            userPassword,
-            ...sanitizedUser
-          } = updatedAuthenticatedUser.toObject();
-          
-          const { 
-            friendPassword,
-            ...sanitizedFriend
-          } = updatedFriend.toObject();
-      
+          updatedAuthenticatedUser = updatedAuthenticatedUser.toObject();
+          delete updatedAuthenticatedUser.password;
+
+          updatedFriend = updatedFriend.toObject();
+          delete updatedFriend.password;
+
           res.status(201).json({
-            user: sanitizedUser,
-            friend: sanitizedFriend
+            user: updatedAuthenticatedUser,
+            friend: updatedFriend
           });
         }).catch((err) => next(err));
       });
