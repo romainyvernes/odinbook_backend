@@ -229,11 +229,11 @@ exports.friend_requests_get = (req, res, next) => {
         const returnObj = {};
 
         if (req.query.received === 'true') {
-          returnObj.friend_requests_received = user.friend_requests_received;
+          returnObj.friendRequestsReceived = user.friend_requests_received;
         }
 
         if (req.query.sent === 'true') {
-          returnObj.friend_requests_sent = user.friend_requests_sent;
+          returnObj.friendRequestsSent = user.friend_requests_sent;
         }
 
         res.json(returnObj);
