@@ -3,6 +3,7 @@ const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reaction = require('../models/reaction');
 const { body } = require('express-validator');
+const bcrypt = require('bcryptjs');
 const handleValidationErrors = require('../errors/errorMiddleware')
                                   .handleValidationErrors;
 
@@ -88,13 +89,23 @@ exports.update_account = [
 
   handleValidationErrors,
 
-  (req, res, next) => {
+  async (req, res, next) => {
     const updateObj = {
-      password: req.body.password !== '' ? req.body.password : undefined,
-      email: req.body.email !== '' ? req.body.email : undefined,
-      first_name: req.body.firstName !== '' ? req.body.firstName : undefined,
-      last_name: req.body.lastName !== '' ? req.body.lastName : undefined
+      password: req.body.password,
+      email: req.body.email,
+      first_name: req.body.firstName,
+      last_name: req.body.lastName
     };
+
+    if (updateObj.password) {
+      try {
+        console.log(updateObj.password)
+        updateObj.password = await bcrypt.hash(updateObj.password, 10);
+        console.log(updateObj.password)
+      } catch (err) {
+        next(err);
+      }
+    }
 
     User.findByIdAndUpdate(
       req.user.id, 
