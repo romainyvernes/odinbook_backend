@@ -22,7 +22,7 @@ exports.index = async (req, res, next) => {
             ...sanitizedUser
           } = user.toObject();
 
-          return res.json({ user: sanitizedUser });
+          return res.json(sanitizedUser);
         }
         
         // use user ID to retrieve all posts on given user's profile
