@@ -8,6 +8,9 @@ const userController = require('../controllers/userController');
 // user's data
 const isUser = require('../auth/authMiddleware').isUser;
 
+// GET list of users matching query
+router.get('/', userController.search);
+
 // GET user's homepage with profile info, posts, and their respective comments
 // or only user's account info if query specified
 router.get('/:username', userController.index);

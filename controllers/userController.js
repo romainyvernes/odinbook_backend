@@ -161,6 +161,22 @@ exports.friends_list = (req, res, next) => {
       });
 };
 
+exports.search = (req, res, next) => {
+  const queryArr = req.query.name.split(' ');
+  
+  User.find({ $or: [
+    { first_name: { 
+      $regex: new RegExp(`^${queryArr[0]}`, 'i') 
+    }},
+    { last_name: { 
+      $regex: new RegExp(`^${queryArr[queryArr.length - 1]}`, 'i') 
+    }}
+  ]}).exec((err, users) => {
+    if (err) return next(err);
+    res.json(users);
+  });
+};
+
 // POST add new friend (i.e., accept friend request)
 exports.friends_add = (req, res, next) => {
   // check first if the friend being added is not already a friend
