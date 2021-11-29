@@ -18,7 +18,7 @@ exports.login = [
 
   handleValidationErrors,
 
-  passport.authenticate('local', { failureFlash: true }),
+  passport.authenticate('local'),
 
   (req, res, next) => {
     const {
@@ -28,6 +28,7 @@ exports.login = [
       friend_requests_sent,
       friend_requests_received,
       friends,
+      picture,
       ...rest
     } = req.user;
     
@@ -38,6 +39,7 @@ exports.login = [
       incomingFriendRequests: friend_requests_received,
       outgoingFriendRequests: friend_requests_sent,
       friends,
+      picture
     });
   }
 ];
@@ -121,6 +123,7 @@ exports.verify = (req, res, next) => {
     friend_requests_sent,
     friend_requests_received,
     friends,
+    picture,
     ...rest
   } = req.user;
   
@@ -131,5 +134,6 @@ exports.verify = (req, res, next) => {
     incomingFriendRequests: friend_requests_received,
     outgoingFriendRequests: friend_requests_sent,
     friends,
+    picture,
   });
 };

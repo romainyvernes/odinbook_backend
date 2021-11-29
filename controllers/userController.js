@@ -71,21 +71,24 @@ exports.index = async (req, res, next) => {
 
 // PUT update user's account details
 exports.update_account = [
-  body('password').trim().escape(),
+  body('password').trim().escape().optional(),
   body('email').trim()
                .isLength({ min: 3 })
                .escape()
-               .withMessage('Email is required.')
                .isEmail()
-               .withMessage('Email address is invalid.'),
+               .withMessage('Email address is invalid.')
+               .optional(),
   body('firstName').trim()
                    .notEmpty()
                    .escape()
-                   .withMessage('First name is required.'),
+                   .optional(),
   body('lastName').trim()
                   .notEmpty()
                   .escape()
-                  .withMessage('Last name is required.'),
+                  .optional(),
+  body('picture').trim()
+                 .escape()
+                 .optional(),
 
   handleValidationErrors,
 
@@ -94,40 +97,51 @@ exports.update_account = [
       password: req.body.password,
       email: req.body.email,
       first_name: req.body.firstName,
-      last_name: req.body.lastName
+      last_name: req.body.lastName,
+      picture: Buffer.from("https://user-images.githubusercontent.com/65140547/143936277-db605564-682e-4122-a09d-b930d21c51c8.png")
     };
 
+    // if a password change is submitted, encode it first
     if (updateObj.password) {
       try {
-        console.log(updateObj.password)
         updateObj.password = await bcrypt.hash(updateObj.password, 10);
-        console.log(updateObj.password)
       } catch (err) {
         next(err);
       }
     }
 
-    User.find({ email: req.body.email }, (err, user) => {
-      if (err) return next(err);
-      if (user) return res.status(409).json("Email address already exists.");
+    // if an email address change is submitted, ensure it doesn't already exist
+    if (updateObj.email) {
+      try {
+        const userFound = await User.findOne({ email: updateObj.email })
+                                    .exec();
 
-      User.findByIdAndUpdate(
-        req.user.id, 
-        updateObj,
-        { new: true },
-        (err, updatedUser) => {
-          if (err) return next(err);
-  
-          // remove sensitive info from user object before sending it to client
-          const { 
-            password,
-            ...sanitizedUser
-          } = updatedUser.toObject();
-  
-          res.status(200).json(sanitizedUser);
+        // check if a user is found and whether that user is different from the
+        // authenticated user
+        if (userFound && userFound.id !== req.user.id) {
+          return res.status(409).json("Email address already exists.");
         }
-      );
-    });
+      } catch (err) {
+        next(err);
+      }
+    }
+
+    User.findByIdAndUpdate(
+      req.user.id, 
+      updateObj,
+      { new: true },
+      (err, updatedUser) => {
+        if (err) return next(err);
+
+        // remove sensitive info from user object before sending it to client
+        const { 
+          password,
+          ...sanitizedUser
+        } = updatedUser.toObject();
+
+        res.status(200).json(sanitizedUser);
+      }
+    );
   }
 ];
 
