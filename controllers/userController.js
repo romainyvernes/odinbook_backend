@@ -107,22 +107,27 @@ exports.update_account = [
       }
     }
 
-    User.findByIdAndUpdate(
-      req.user.id, 
-      updateObj,
-      { new: true },
-      (err, updatedUser) => {
-        if (err) return next(err);
+    User.find({ email: req.body.email }, (err, user) => {
+      if (err) return next(err);
+      if (user) return res.status(409).json("Email address already exists.");
 
-        // remove sensitive info from user object before sending it to client
-        const { 
-          password,
-          ...sanitizedUser
-        } = updatedUser.toObject();
-
-        res.status(200).json(sanitizedUser);
-      }
-    );
+      User.findByIdAndUpdate(
+        req.user.id, 
+        updateObj,
+        { new: true },
+        (err, updatedUser) => {
+          if (err) return next(err);
+  
+          // remove sensitive info from user object before sending it to client
+          const { 
+            password,
+            ...sanitizedUser
+          } = updatedUser.toObject();
+  
+          res.status(200).json(sanitizedUser);
+        }
+      );
+    });
   }
 ];
 
