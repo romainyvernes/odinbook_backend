@@ -71,7 +71,7 @@ exports.index = async (req, res, next) => {
 
 // PUT update user's account details
 exports.update_account = [
-  body('password').trim().escape().optional(),
+  body('password').trim().notEmpty().escape().optional(),
   body('email').trim()
                .isLength({ min: 3 })
                .escape()
@@ -87,6 +87,7 @@ exports.update_account = [
                   .escape()
                   .optional(),
   body('picture').trim()
+                 .notEmpty()
                  .escape()
                  .optional(),
 
