@@ -9,9 +9,11 @@ const UserSchema = new Schema(
     first_name: {type: String, maxlength: 100, required: true},
     last_name: {type: String, maxlength: 100, required: true},
     picture: {
-      type: Buffer, 
-      required: true, 
-      default: Buffer.from("https://user-images.githubusercontent.com/65140547/143936277-db605564-682e-4122-a09d-b930d21c51c8.png")
+      url: {
+        type: String,
+        required: true,
+        default: "https://romainodinbook.s3.us-west-2.amazonaws.com/avatar-ga4f9d40b5_1280.png"
+      }
     },
     friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
     friend_requests_sent: [{type: Schema.Types.ObjectId, ref: 'User'}],

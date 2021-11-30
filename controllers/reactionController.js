@@ -54,7 +54,7 @@ exports.reactions_add = [
         newReaction.save((err) => {
           if (err) return next(err);
 
-          newReaction.populate('author', 'last_name first_name name username')
+          newReaction.populate('author', 'last_name first_name name username picture')
                       .then((populatedReaction) => {
                         // indicates new reaction was successfully created
                         res.status(201).json(populatedReaction);

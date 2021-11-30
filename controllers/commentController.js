@@ -10,13 +10,13 @@ const handleValidationErrors = require('../errors/errorMiddleware')
 exports.comments_get = (req, res, next) => {
   if (req.query.parentId) {
     return Comment.find({ parent_id: req.query.parentId })
-                  .populate('author', 'last_name first_name name username')
+                  .populate('author', 'last_name first_name name username picture')
                   .populate('replies')
                   .populate({ 
                     path: 'reactions',
                     populate: {
                       path: 'author',
-                      select: 'last_name first_name name username'
+                      select: 'last_name first_name name username picture'
                     }
                   })
                   .exec((err, comments) => {
@@ -82,12 +82,12 @@ exports.comments_add = [
           if (err) return next(err);
 
           newComment.populate([
-            { path: 'author', select: 'last_name first_name name username' },
+            { path: 'author', select: 'last_name first_name name username picture' },
             { 
               path: 'reactions',
               populate: {
                 path: 'author',
-                select: 'last_name first_name name username'
+                select: 'last_name first_name name username picture'
               }
             },
             { path: 'replies' }

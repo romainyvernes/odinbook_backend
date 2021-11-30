@@ -11,7 +11,7 @@ const handleValidationErrors = require('../errors/errorMiddleware')
 exports.index = async (req, res, next) => {
   // query DB for user info
   User.findOne({ username: req.params.username })
-      .populate('friends', 'last_name first_name name username')
+      .populate('friends', 'last_name first_name name username picture')
       .exec((err, user) => {
         if (err) return next(err);
 
@@ -29,19 +29,19 @@ exports.index = async (req, res, next) => {
         // use user ID to retrieve all posts on given user's profile
         Post.find({ destination_profile: user._id })
             .sort('-date')
-            .populate('author', 'last_name first_name name username')
+            .populate('author', 'last_name first_name name username picture')
             .populate({ 
               path: 'comments', 
               populate: [
                 { 
                   path: 'author', 
-                  select: 'last_name first_name name username' 
+                  select: 'last_name first_name name username picture' 
                 },
                 { 
                   path: 'reactions',
                   populate: {
                     path: 'author',
-                    select: 'last_name first_name name username'
+                    select: 'last_name first_name name username picture'
                   }
                 },
                 {
@@ -51,9 +51,9 @@ exports.index = async (req, res, next) => {
             })
             .populate({ 
               path: 'reactions', 
-              populate: { path: 'author', select: 'last_name first_name name username' }
+              populate: { path: 'author', select: 'last_name first_name name username picture' }
             })
-            .populate('destination_profile', 'last_name first_name name username')
+            .populate('destination_profile', 'last_name first_name name username picture')
             .exec((err, posts) => {
               if (err) return next(err);
 
@@ -99,7 +99,9 @@ exports.update_account = [
       email: req.body.email,
       first_name: req.body.firstName,
       last_name: req.body.lastName,
-      picture: Buffer.from("https://user-images.githubusercontent.com/65140547/143936277-db605564-682e-4122-a09d-b930d21c51c8.png")
+      picture: {
+        url: "https://romainodinbook.s3.us-west-2.amazonaws.com/avatar-ga4f9d40b5_1280.png"
+      }
     };
 
     // if a password change is submitted, encode it first
@@ -125,6 +127,10 @@ exports.update_account = [
       } catch (err) {
         next(err);
       }
+    }
+
+    if (updateObj.picture.url) {
+      // use file upload utility function
     }
 
     User.findByIdAndUpdate(
@@ -174,7 +180,7 @@ exports.friends_list = (req, res, next) => {
         { username: req.params.username }, 
         'friends'
       )
-      .populate('friends', 'last_name first_name name username')
+      .populate('friends', 'last_name first_name name username picture')
       .exec((err, user) => {
         if (err) return next(err);
         res.json(user.friends);
@@ -264,11 +270,11 @@ exports.friend_requests_get = (req, res, next) => {
   User.findById(req.user.id, 'friend_requests_received friend_requests_sent')
       .populate(
         'friend_requests_received', 
-        'last_name first_name name username'
+        'last_name first_name name username picture'
       )
       .populate(
         'friend_requests_sent', 
-        'last_name first_name name username'
+        'last_name first_name name username picture'
       )
       .exec((err, user) => {
         if (err) return next(err);

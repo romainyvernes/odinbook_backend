@@ -38,19 +38,19 @@ exports.posts_list = (req, res, next) => {
     return res.sendStatus(404);
   }
 
-  postQuery.populate('author', 'last_name first_name name username')
+  postQuery.populate('author', 'last_name first_name name username picture')
             .populate({ 
               path: 'comments', 
               populate: [
                 { 
                   path: 'author', 
-                  select: 'last_name first_name name username' 
+                  select: 'last_name first_name name username picture' 
                 },
                 { 
                   path: 'reactions',
                   populate: {
                     path: 'author',
-                    select: 'last_name first_name name username'
+                    select: 'last_name first_name name username picture'
                   }
                 },
                 {
@@ -60,9 +60,9 @@ exports.posts_list = (req, res, next) => {
             })
             .populate({ 
               path: 'reactions', 
-              populate: { path: 'author', select: 'last_name first_name name username' }
+              populate: { path: 'author', select: 'last_name first_name name username picture' }
             })
-            .populate('destination_profile', 'last_name first_name name username')
+            .populate('destination_profile', 'last_name first_name name username picture')
             .exec((err, posts) => {
               if (err) return next(err);
               res.json(posts);
@@ -100,9 +100,9 @@ exports.posts_add = [
         if (err) return next(err);
 
         newPost.populate([
-          { path: 'author', select: 'last_name first_name name username' },
+          { path: 'author', select: 'last_name first_name name username picture' },
           { path: 'reactions' },
-          { path: 'destination_profile', select: 'last_name first_name name username' }
+          { path: 'destination_profile', select: 'last_name first_name name username picture' }
         ]).then((populatedPost) => {
           // indicates new post was successfully created
           res.status(201).json(populatedPost);
