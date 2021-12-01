@@ -8,6 +8,9 @@ const userController = require('../controllers/userController');
 // user's data
 const isUser = require('../auth/authMiddleware').isUser;
 
+// import image uploading middleware that attaches new image's URL to request
+const upload = require('../utils/imageUpload');
+
 // GET list of users matching query
 router.get('/', userController.search);
 
@@ -20,6 +23,9 @@ router.put('/:username', isUser, userController.update_account);
 
 // DELETE delete user's account
 router.delete('/:username', isUser, userController.delete_account);
+
+// PUT update user's profile picture
+router.put('/:username/profile-picture', upload.single('image'), userController.upload_picture);
 
 // GET list of user's friends
 router.get('/:username/friends', userController.friends_list);

@@ -86,10 +86,6 @@ exports.update_account = [
                   .notEmpty()
                   .escape()
                   .optional(),
-  body('picture').trim()
-                 .notEmpty()
-                 .escape()
-                 .optional(),
 
   handleValidationErrors,
 
@@ -98,10 +94,7 @@ exports.update_account = [
       password: req.body.password,
       email: req.body.email,
       first_name: req.body.firstName,
-      last_name: req.body.lastName,
-      picture: {
-        url: "https://romainodinbook.s3.us-west-2.amazonaws.com/avatar-ga4f9d40b5_1280.png"
-      }
+      last_name: req.body.lastName
     };
 
     // if a password change is submitted, encode it first
@@ -127,10 +120,6 @@ exports.update_account = [
       } catch (err) {
         next(err);
       }
-    }
-
-    if (updateObj.picture.url) {
-      // use file upload utility function
     }
 
     User.findByIdAndUpdate(
@@ -172,6 +161,32 @@ exports.delete_account = (req, res, next) => {
     // indicates deletion was successful
     res.sendStatus(200);
   }).catch((err) => next(err));
+};
+
+exports.upload_picture = (req, res, next) => {
+  if (req.file) {
+    User.findByIdAndUpdate(
+      req.user.id,
+      { picture: {
+          url: req.file.location
+        }
+      },
+      { new: true },
+      (err, updatedUser) => {
+        if (err) return next(err);
+
+        // remove sensitive info from user object before sending it to client
+        const { 
+          password,
+          ...sanitizedUser
+        } = updatedUser.toObject();
+
+        res.status(200).json(sanitizedUser);
+      }
+    );
+  } else {
+    res.sendStatus(400);
+  }
 };
 
 // GET list of user's friends
