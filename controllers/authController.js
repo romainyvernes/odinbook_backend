@@ -55,7 +55,10 @@ exports.register = [
   body('username').trim()
                   .notEmpty()
                   .escape()
-                  .withMessage('Username is required.'),
+                  .withMessage('Username is required.')
+                  .not()
+                  .isIn(['friends', 'settings'])
+                  .withMessage('Invalid username.'),
   body('password').trim()
                   .notEmpty()
                   .escape()

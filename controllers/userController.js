@@ -163,6 +163,7 @@ exports.delete_account = (req, res, next) => {
   }).catch((err) => next(err));
 };
 
+// PUT update user's profile picture
 exports.upload_picture = (req, res, next) => {
   if (req.file) {
     User.findByIdAndUpdate(
