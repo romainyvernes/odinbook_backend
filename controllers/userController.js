@@ -90,6 +90,10 @@ exports.update_account = [
   handleValidationErrors,
 
   async (req, res, next) => {
+    if (req.params.username === 'guestuser') {
+      return res.status(403).json('Guest user account cannot be updated.');
+    }
+
     const updateObj = {
       password: req.body.password,
       email: req.body.email,
@@ -114,7 +118,7 @@ exports.update_account = [
 
         // check if a user is found and whether that user is different from the
         // authenticated user
-        if (userFound && userFound.id !== req.user.id) {
+        if (userFound && userFound.username !== req.params.username) {
           return res.status(409).json("Email address already exists.");
         }
       } catch (err) {
@@ -122,8 +126,8 @@ exports.update_account = [
       }
     }
 
-    User.findByIdAndUpdate(
-      req.user.id, 
+    User.findOneAndUpdate(
+      { username: req.params.username }, 
       updateObj,
       { new: true },
       (err, updatedUser) => {
@@ -143,6 +147,10 @@ exports.update_account = [
 
 // DELETE delete user's account, posts, comments, and reactions
 exports.delete_account = (req, res, next) => {
+  if (req.params.username === 'guestuser') {
+    return res.status(403).json('Guest user account cannot be updated.');
+  }
+
   Promise.all([
     User.findByIdAndDelete(req.user.id).exec(),
     Post.deleteMany({ $or: [
@@ -166,8 +174,8 @@ exports.delete_account = (req, res, next) => {
 // PUT update user's profile picture
 exports.upload_picture = (req, res, next) => {
   if (req.file) {
-    User.findByIdAndUpdate(
-      req.user.id,
+    User.findOneAndUpdate(
+      { username: req.params.username },
       { picture: {
           url: req.file.location
         }

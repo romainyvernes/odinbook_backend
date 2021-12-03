@@ -25,7 +25,12 @@ router.put('/:username', isUser, userController.update_account);
 router.delete('/:username', isUser, userController.delete_account);
 
 // PUT update user's profile picture
-router.put('/:username/profile-picture', upload.single('image'), userController.upload_picture);
+router.put(
+  '/:username/profile-picture', 
+  isUser, 
+  upload.single('image'), 
+  userController.upload_picture
+);
 
 // GET list of user's friends
 router.get('/:username/friends', userController.friends_list);
