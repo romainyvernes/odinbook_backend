@@ -10,7 +10,9 @@ exports.login = [
   body('email').trim()
                   .notEmpty()
                   .escape()
-                  .withMessage('Email address is required.'),
+                  .withMessage('Email address is required.')
+                  .isEmail()
+                  .withMessage('Email address is invalid.'),
   body('password').trim()
                   .notEmpty()
                   .escape()
