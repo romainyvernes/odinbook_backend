@@ -26,6 +26,15 @@ exports.comments_get = (req, res, next) => {
                   });
   }
 
+  if (req.query.postId) {
+    return Comment.find({ post_id: req.query.postId })
+                  .exec((err, comments) => {
+                    if (err) return next(err);
+
+                    res.json(comments);
+                  });
+  }
+
   res.sendStatus(404);
 };
 
