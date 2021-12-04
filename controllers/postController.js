@@ -11,16 +11,18 @@ exports.posts_list = (req, res, next) => {
   let postQuery = null;
 
   // posts on the user's profile whose profileId is provided
-  if (req.query.profileId === 'true') {
+  if (req.query.profileId) {
     postQuery = Post.find({ destination_profile: req.query.profileId })
                     .sort('-date');
       
   }
 
-  // latest 100 posts added to DB.
+  // 50 latest posts added to DB.
   // NOTE: if postQuery is not null, it implies a value was assigned to it in
   // the above query which gives the profileId query precedence
   if (!postQuery && req.query.recent === 'true') {
+    // retrieve only posts that a user posted on their own profile (hide posts
+    // that were addressed by one user directly to another)
     postQuery = Post.find({ 
                       $expr: {
                         $eq: [
@@ -65,6 +67,7 @@ exports.posts_list = (req, res, next) => {
             .populate('destination_profile', 'last_name first_name name username picture')
             .exec((err, posts) => {
               if (err) return next(err);
+              
               res.json(posts);
             });
 };
