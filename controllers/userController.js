@@ -71,7 +71,11 @@ exports.index = async (req, res, next) => {
 
 // PUT update user's account details
 exports.update_account = [
-  body('password').trim().notEmpty().escape().optional(),
+  body('password').trim()
+                  .notEmpty()
+                  .escape()
+                  .withMessage('Password must be at least 1 character long.')
+                  .optional(),
   body('email').trim()
                .isLength({ min: 3 })
                .escape()
@@ -81,10 +85,12 @@ exports.update_account = [
   body('firstName').trim()
                    .notEmpty()
                    .escape()
+                   .withMessage('First name must be at least 1 character long.')
                    .optional(),
   body('lastName').trim()
                   .notEmpty()
                   .escape()
+                  .withMessage('Last name must be at least 1 character long.')
                   .optional(),
 
   handleValidationErrors,

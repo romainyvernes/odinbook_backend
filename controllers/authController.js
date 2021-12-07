@@ -20,29 +20,39 @@ exports.login = [
 
   handleValidationErrors,
 
-  passport.authenticate('local'),
-
   (req, res, next) => {
-    const {
-      username,
-      id,
-      name,
-      friend_requests_sent,
-      friend_requests_received,
-      friends,
-      picture,
-      ...rest
-    } = req.user;
-    
-    res.json({
-      username,
-      id,
-      name,
-      incomingFriendRequests: friend_requests_received,
-      outgoingFriendRequests: friend_requests_sent,
-      friends,
-      picture
-    });
+    // use passport within controller to have access to req/res objects to send
+    // customize error handling in case of failed authentication
+    passport.authenticate('local', (err, user, info) => {
+      if (err) return next(err);
+      if (!user) {
+        return res.status(401).json(info);
+      }
+      req.logIn(user, function(err) {
+        if (err) return next(err);
+        
+        const {
+          username,
+          id,
+          name,
+          friend_requests_sent,
+          friend_requests_received,
+          friends,
+          picture,
+          ...rest
+        } = req.user;
+        
+        res.json({
+          username,
+          id,
+          name,
+          incomingFriendRequests: friend_requests_received,
+          outgoingFriendRequests: friend_requests_sent,
+          friends,
+          picture
+        });
+      });
+    })(req, res, next);
   }
 ];
 
@@ -92,8 +102,13 @@ exports.register = [
       }, 
       (err, user) => {
         if (err) return next(err);
-        if (user) return res.json({ 
-          message: 'Username or email are already taken.' 
+        if (user) return res.status(401).json({ 
+          username: {
+            msg: 'Username or email are already taken.'
+          },
+          email: {
+            msg: 'Username or email are already taken.'
+          }, 
         });
 
         // hash password and save new user into DB

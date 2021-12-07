@@ -12,14 +12,22 @@ const verifyCallback = (email, password, done) => {
     if (err) return done(err);
     // no user found
     if (!user) {
-      return done(null, false, { message: 'Incorrect email.'});
+      return done(null, false, { 
+        email: {
+          msg: 'Incorrect email.'
+        }
+      });
     }
     // hash password and compare it to password hash stored in DB
-    bcrypt.compare(password, user.password, (err, res) => {
-      if (res) { // a match was found
+    bcrypt.compare(password, user.password, (err, found) => {
+      if (found) { // a match was found
         return done(null, user);
       } else { // no match found
-        return done(null, false, { message: 'Incorrect password.'});
+        return done(null, false, { 
+          password: {
+            msg: 'Incorrect password.'
+          }
+        });
       }
     });
   });
