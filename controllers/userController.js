@@ -15,6 +15,10 @@ exports.index = async (req, res, next) => {
       .exec((err, user) => {
         if (err) return next(err);
 
+        if(!user) {
+          return res.sendStatus(404);
+        }
+
         // if only user's account information is requested
         if (req.query.accountInfo === 'true') {
           // remove sensitive info from user object before sending it to client
@@ -139,6 +143,10 @@ exports.update_account = [
       (err, updatedUser) => {
         if (err) return next(err);
 
+        if(!updatedUser) {
+          return res.sendStatus(404);
+        }
+
         // remove sensitive info from user object before sending it to client
         const { 
           password,
@@ -190,6 +198,10 @@ exports.upload_picture = (req, res, next) => {
       (err, updatedUser) => {
         if (err) return next(err);
 
+        if(!updatedUser) {
+          return res.sendStatus(404);
+        }
+
         // remove sensitive info from user object before sending it to client
         const { 
           password,
@@ -213,6 +225,9 @@ exports.friends_list = (req, res, next) => {
       .populate('friends', 'last_name first_name name username picture')
       .exec((err, user) => {
         if (err) return next(err);
+        if(!user) {
+          return res.sendStatus(404);
+        }
         res.json(user.friends);
       });
 };

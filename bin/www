@@ -22,6 +22,47 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
+ * Socket.io setup and events
+ */
+
+const { Server } = require('socket.io');
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+  socket.on('new post', (post) => {
+    socket.broadcast.emit('new post', post);
+  });
+
+  socket.on('update post', (post) => {
+    socket.broadcast.emit('update post', post);
+  });
+
+  socket.on('delete post', (post) => {
+    socket.broadcast.emit('delete post', post);
+  });
+
+  socket.on('new comment', (comment) => {
+    socket.broadcast.emit('new comment', comment);
+  });
+
+  socket.on('update comment', (comment) => {
+    socket.broadcast.emit('update comment', comment);
+  });
+
+  socket.on('delete comment', (comment) => {
+    socket.broadcast.emit('delete comment', comment);
+  });
+
+  socket.on('new reaction', (reactionObj) => {
+    socket.broadcast.emit('new reaction', reactionObj);
+  });
+
+  socket.on('delete reaction', (reactionObj) => {
+    socket.broadcast.emit('delete reaction', reactionObj);
+  });
+});
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
