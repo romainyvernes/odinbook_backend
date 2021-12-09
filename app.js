@@ -4,6 +4,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session');
 const passport = require('passport');
+const compression = require('compression');
+const helmet = require('helmet');
 
 // enable environment variables
 require('dotenv').config();
@@ -13,6 +15,7 @@ const connection = require('./config/database');
 
 var app = express();
 
+app.use(helmet());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -45,6 +48,8 @@ app.use(passport.session());
 
 // import custom auth middleware that ensures user is authenticated
 const isAuth = require('./auth/authMiddleware').isAuth;
+
+app.use(compression());
 
 // ROUTES
 
