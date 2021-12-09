@@ -374,13 +374,15 @@ exports.friend_request_delete = (req, res, next) => {
   // decline an incoming friend request
   if (req.query.decline === 'true') {
     return Promise.all([
-      User.findByIdUpdate(
+      User.findByIdAndUpdate(
         req.user.id, 
-        { $pull: { friend_requests_received: req.params.friendId }}
+        { $pull: { friend_requests_received: req.params.friendId }},
+        {new: true}
       ).exec(),
       User.findByIdAndUpdate(
         req.params.friendId, 
-        { $pull: { friend_requests_sent: req.user.id }}
+        { $pull: { friend_requests_sent: req.user.id }},
+        {new: true}
       ).exec()
     ]).then((docs) => {
       res.sendStatus(200);
