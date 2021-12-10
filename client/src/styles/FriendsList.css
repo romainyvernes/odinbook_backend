@@ -1,0 +1,18 @@
+.friends-list {
+  display: grid;
+  grid-auto-columns: minmax(200px, 240px);
+  gap: 10px;
+}
+
+.friends-list .bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 0.5em 0.8em 0.8em 0.8em;
+}
+
+.friends-list .link-wrapper img {
+  width: 100%;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}

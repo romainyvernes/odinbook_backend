@@ -1,0 +1,17 @@
+.friends-dashboard aside i {
+  background-color: rgb(108, 117, 125, 0.3);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.9em;
+  font-size: 1.3em;
+  padding: 0.1em;
+}
+
+.friends-dashboard .dashboard-link.selected i {
+  color: #fff;
+  background-color: #1679ea;
+}

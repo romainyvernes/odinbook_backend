@@ -6,6 +6,8 @@ const session = require('express-session');
 const passport = require('passport');
 const compression = require('compression');
 const helmet = require('helmet');
+const cors = require('cors');
+const path = require('path');
 
 // enable environment variables
 require('dotenv').config();
@@ -20,6 +22,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
+app.use(express.static(path.resolve(__dirname, './client/build')));
 
 // SESSION STORE
 const MongoStore = require('connect-mongo');
@@ -67,6 +71,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
 app.use('/api/reactions', reactionsRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+});
 
 // ERRORS
 

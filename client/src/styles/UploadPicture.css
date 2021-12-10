@@ -1,0 +1,15 @@
+.upload-form.modal-body {
+  padding: 0;
+}
+
+.upload-form .form-input-wrapper {
+  margin: 1em;
+}
+
+.upload-picture.quaternary-frame {
+  height: auto;
+}
+
+.upload-picture.modal-dialog {
+  max-width: 600px;
+}

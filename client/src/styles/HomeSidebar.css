@@ -1,0 +1,35 @@
+.home-sidebar {
+  width: 250px;
+  height: 100vh;
+  padding: 1em 0.8em;
+  overflow: scroll;
+}
+
+.home-sidebar li {
+  border-radius: 7px;
+}
+
+.home-sidebar li:hover {
+  background-color: #e4e6eb;
+}
+
+/* increase size of friends icon to match user icon */
+.home-sidebar li:nth-child(2) i {
+  font-size: 1.8em;
+  margin: 0 0.3em 0 -0.1em;
+}
+
+.home-sidebar li:first-child i {
+  font-size: 1.5em;
+}
+
+.home-sidebar .user-picture {
+  height: 25px;
+  margin-right: 0.6em;
+}
+
+@media screen and (max-width: 1023px) {
+  .home-sidebar {
+    display: none;
+  }
+}

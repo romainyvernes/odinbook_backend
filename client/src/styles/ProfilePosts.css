@@ -1,0 +1,36 @@
+.snapshot {
+  width: 40%;
+}
+
+.snapshot a:hover {
+  text-decoration: underline;
+}
+
+.snapshot .friends-count {
+  margin-top: 0.3em;
+}
+
+.snapshot .friends ul {
+  margin-top: 1em;
+  display: grid;
+  align-items: end;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 125px));
+}
+
+.snapshot .friend-picture {
+  width: 100%;
+}
+
+.snapshot h6 {
+  font-size: 0.9em;
+}
+
+.profile-posts {
+  width: 60%;
+}
+
+@media screen and (max-width: 1023px) {
+  .snapshot, .profile-posts {
+    width: 100%;
+  }
+}

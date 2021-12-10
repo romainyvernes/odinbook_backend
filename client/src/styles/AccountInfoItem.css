@@ -1,0 +1,66 @@
+.account-info-item {
+  border-bottom: 1px solid #eee;
+}
+
+.account-info-item .sub-wrapper {
+  display: flex;
+  margin: 0.5em 0;
+  padding: 0.7em 0.5em;
+}
+
+.account-info-item .btn {
+  font-size: inherit;
+  padding: 0.2em 1em;
+}
+
+.account-info-item .sub-wrapper:hover {
+  border-radius: 0;
+}
+
+.account-info-item h3 {
+  width: 180px;
+}
+
+.account-info-item:hover {
+  cursor: pointer;
+}
+
+.account-info-item:hover .info-display button {
+  text-decoration: underline;
+}
+
+.account-info-item form .content {
+  width: 200px;
+}
+
+.account-info-item form .content.account-management {
+  width: auto;
+}
+
+.account-info-item input {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 0.2em;
+}
+
+.account-info-item form label {
+  display: flex;
+  align-items: center;
+  margin: 0.5em 0;
+  flex-wrap: wrap;
+  column-gap: 1em
+}
+
+.account-info-item .validation {
+  margin-top: 1em;
+  text-align: center;
+}
+
+.account-info-item .validation button:first-child {
+  margin-right: 1em;
+}
+
+.expand-btn {
+  margin-left: auto;
+}

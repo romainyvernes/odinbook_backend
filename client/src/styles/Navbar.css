@@ -1,0 +1,242 @@
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 0.7em;
+}
+
+/* when modal is enabled, disable sticky position for nav-bar so its children's
+z-index can work to appear on top of modal */
+.modal-open .nav-bar {
+  position: static;
+}
+
+/*******
+LEFTMOST AREA IN NAVIGATION BAR WITH WEBSITE ICON & SEARCH BAR
+*******/
+
+/* only works when modal is enabled */
+.search {
+  position: relative;
+  z-index: 2001;
+  display: flex;
+  align-items: center;
+}
+
+.site-icon {
+  font-weight: 900;
+}
+
+.site-icon.reg-display {
+  margin: 0 0.4em 0 0.2em;
+  font-size: 1.5em;
+  vertical-align: bottom;
+}
+
+.site-icon.sm-display {
+  padding: 0.35em 0.4em;
+  border-radius: 50%;
+  font-size: 1.6em;
+}
+
+.search-icon {
+  font-size: 1.2em;
+  padding: 0.4em 0.5em;
+  border-radius: 50%;
+}
+
+/* override default setting that places dropdown menu relative to the button
+that activates it */
+.search .dropdown {
+  position: static;
+}
+
+.search .dropdown-menu {
+  margin: -2px 0 0 -11px;
+  width: 330px;
+  max-height: 500px;
+  padding: 0.5em;
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.2);
+  border: none;
+  transform: none !important;
+}
+
+.search .dropdown-menu .top {
+  display: flex;
+}
+
+.search .dropdown-menu ul  {
+  margin: 0.5em 0 0 0;
+}
+
+.search .dropdown-item {
+  padding: 0.5em;
+  font-weight: 600;
+  font-size: 0.9em;
+  border-radius: 7px;
+}
+
+.search .return-btn {
+  font-size: 1.2em;
+  margin-right: 0.4em;
+  padding: 0 0.4em;
+  border-radius: 50%;
+}
+
+.search .return-btn svg {
+  stroke-width: 0.7;
+}
+
+.search .dropdown-toggle::after {
+  display: none;
+}
+
+.search-icon svg {
+  margin-bottom: 0.2em;
+}
+  
+.search a:hover {
+  text-decoration: none;
+}
+
+.search .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.search .dropdown-item h6 {
+  font-weight: 400;
+}
+
+.search .dropdown-menu .user-picture {
+  height: 30px;
+}
+
+/*******
+MIDDLE AREA IN NAVIGATION BAR WITH LINKS TO DIFFERENT PAGES OF A USER'S ACCOUNT
+*******/
+
+.nav-bar .nav-link {
+  max-width: 100px;
+}
+
+.icon {
+  font-size: 1.5em;
+}
+
+/* by default, hide "filled" version of navigation link icons */
+.icon.filled {
+  display: none;
+}
+
+.icon.outline {
+  color: #65676b;
+}
+
+/* when page associated with icon is displayed, show "filled" icons */
+.selected .icon.filled {
+  display: inline;
+}
+
+/* when page associated with icon is displayed, hide "outline" icons */
+.selected .icon.outline {
+  display: none;
+}
+
+/*******
+RIGHTMOST AREA IN NAVIGATION BAR
+*******/
+
+.navigation-buttons .dropdown-menu .user-picture {
+  height: 50px;
+  margin-right: 0.5em;
+}
+
+.navigation-buttons .top-link {
+  display: flex;
+  align-items: center;
+}
+
+/* only works when modal is enabled */
+.navigation-buttons {
+  position: relative;
+  z-index: 2000;
+}
+
+/* default styling for buttons */
+.navigation-buttons .btn.btn-secondary,
+.navigation-buttons .btn.btn-secondary:focus {
+  border-radius: 50%;
+  padding: 0.45em 0.95em;
+  background-color: rgb(108, 117, 125, 0.3);
+}
+
+/* default styling for buttons on hover */
+.navigation-buttons .btn.btn-secondary:hover {
+  background-color: rgb(108, 117, 125, 0.4);
+}
+
+/* button styling when clicked */
+.navigation-buttons .show > .btn.btn-secondary,
+.navigation-buttons .show > .btn.btn-secondary:focus,
+.navigation-buttons .show > .btn.btn-secondary:active,
+.navigation-buttons .show > .btn.btn-secondary.dropdown-toggle {
+  background-color: rgb(22, 121, 234, 0.2);
+}
+
+/* button styling when clicked and on hover */
+.navigation-buttons .show > .btn.btn-secondary:focus:hover {
+  background-color: rgb(22, 121, 234, 0.3);
+}
+
+/* icon styling inside buttons when clicked */
+.navigation-buttons .show > .btn.btn-secondary::after {
+  color: #1679ea;
+}
+
+.navigation-buttons .dropdown-menu {
+  padding: 0.6em;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  margin-right: 1em;
+  width: 350px;
+}
+
+/* applies to every item in dropdown menu */
+.navigation-buttons .dropdown-menu a {
+  padding: 0.6em;
+}
+
+/* applies to horizontal line separating user's name from other items in 
+dropdown menu */
+.navigation-buttons .dropdown-menu hr {
+  margin: 0.6em 0;
+}
+
+/* applies to user's name in dropdown menu */
+.navigation-buttons .dropdown-menu h2 {
+  font-weight: 700;
+}
+
+/* applies to secondary text below main labels */
+.navigation-buttons p {
+  font-size: 0.9em;
+}
+
+/* applies to link label in dropdown menu */
+.navigation-buttons .dropdown-menu h6 {
+  font-weight: 500;
+}
+
+.dropdown-btn.dropdown-item {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-btn i {
+  font-size: 1.5em;
+  margin-right: 0.5em;
+}

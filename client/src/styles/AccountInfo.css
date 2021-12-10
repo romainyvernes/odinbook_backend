@@ -1,0 +1,13 @@
+.account-info-list {
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  font-size: 0.9em;
+  min-width: 600px;
+  overflow-x: scroll;
+}
+
+.account-info-list .invalid-feedback {
+  flex-grow: 1;
+  font-weight: 400;
+  overflow-wrap: break-word;
+}

@@ -1,0 +1,79 @@
+.profile main {
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+  gap: 1em;
+}
+
+.profile main,
+.profile-nav {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  padding-top: 2.5em;
+}
+
+.profile-header .user-picture {
+  height: 150px;
+}
+
+.profile h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin: 0.7em 0 1em 0;
+}
+
+.profile-nav {
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile .nav-link {
+  padding: 1em 0.8em;
+  font-size: 0.9em;
+}
+
+.profile :not(.selected).nav-link {
+  color: #65676b;
+}
+
+.profile h2 {
+  font-size: 1.1em;
+}
+
+.profile-upload-btn {
+  position: relative;
+}
+
+.profile-upload-icon {
+  background: #bbb;
+  border-radius: 50%;
+  padding: 0.4em;
+  position: absolute;
+  right: 0;
+  bottom: 15px;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+}
+
+.profile .friend-btn {
+  display: flex;
+  gap: 1em;
+}
+
+@media screen and (max-width: 1023px) {
+  .profile main {
+    flex-direction: column;
+  }
+
+  .profile main,
+  .profile-nav {
+    margin: 0 1em;
+  }
+}

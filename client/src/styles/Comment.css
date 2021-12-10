@@ -1,0 +1,81 @@
+.comment {
+  margin: 1em 0;
+}
+
+.comment .sub-wrapper,
+.comment .edit-comment-form {
+  font-size: 0.9em;
+}
+
+.comment .sub-sub-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.comment a[rel="author"]:first-child {
+  align-self: flex-start;
+  margin-top: 0.2em;
+}
+
+.comment .user-picture {
+  height: 30px;
+  margin-right: 0.5em;
+}
+
+.comment .sub-sub-wrapper .comment-main {
+  flex-grow: 1;
+}
+
+/* shrink three-dot button compared to its twin in post */
+.comment .more-btn {
+  font-size: 2em;
+  margin-left: 0.2em;
+}
+
+.comment-btns {
+  margin: 0.3em 0 0 3.6em;
+  display: flex;
+  align-items: center;
+}
+
+/* set as positioning point of reference */
+.comment-main {
+  position: relative;
+}
+
+/* set specific style for like button of a comment, and position in lower right
+corner of comment-main container */
+.comment .like-button {
+  position: absolute;
+  right: 10px;
+  background-color: #fff;
+  font-size: 0.9em;
+  padding: 0 0.3em;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.comment .left {
+  font-size: 0.95em;
+}
+
+.comment-date {
+  font-size: 0.9em;
+}
+
+.comment-btns i {
+  margin: 0 0.2em;
+}
+
+.comment-btns button:hover {
+  text-decoration: underline;
+}
+
+.more-comments-btn {
+  margin: 0.3em 0 0 3.2em;
+}
+
+.arrow-icon {
+  stroke-width: 0.5;
+  margin-right: 0.3em;
+}

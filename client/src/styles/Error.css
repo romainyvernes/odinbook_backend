@@ -1,0 +1,9 @@
+.error {
+  text-align: center;
+  padding-top: 4em;
+}
+
+.error h1 {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}

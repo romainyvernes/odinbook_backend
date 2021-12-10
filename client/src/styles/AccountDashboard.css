@@ -1,0 +1,87 @@
+.account-dashboard {
+  display: flex;
+}
+
+.account-dashboard main {
+  padding: 2em;
+  flex-grow: 1;
+  overflow: scroll;
+}
+
+.account-dashboard h2 {
+  font-size: 1.2em;
+  margin-bottom: 1em;
+}
+
+.account-dashboard aside {
+  min-width: 350px;
+  height: 100vh;
+  padding: 1em 0.5em;
+}
+
+.account-dashboard aside header {
+  padding: 0 0.6em 1em 0.6em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-dashboard .btn-close {
+  padding: 0;
+}
+
+.account-dashboard aside h1 {
+  font-weight: 700;
+  font-size: 1.4em;
+}
+
+.dashboard-link i {
+  font-size: 1.5em;
+  margin-right: 0.5em;
+}
+
+.dashboard-link.selected {
+  background: #f0f2f5;
+  border-radius: 7px;
+}
+
+@media screen and (max-width: 767px) {
+  .account-dashboard {
+    flex-direction: column;
+  }
+
+  .account-dashboard aside {
+    height: auto;
+    position: relative;
+    z-index: 10;
+  }
+
+  .account-dashboard aside header {
+    padding-bottom: 0;
+  }
+
+  .account-dashboard aside ul {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 55px;
+    background-color: #fff;
+    transition: max-height 0.7s ease-in-out;
+    max-height: 0;
+    padding: 1em;
+    visibility: hidden;
+  }
+
+  .account-dashboard aside ul.show {
+    transition: max-height 0.7s ease;
+    max-height: 100vh;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+    padding: 1em;
+    visibility: visible;
+  }
+
+  .account-dashboard main {
+    height: 100vh;
+  }
+}

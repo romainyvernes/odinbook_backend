@@ -1,0 +1,15 @@
+.post-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-form textarea {
+  flex-grow: 1;
+  resize: none;
+  margin-top: 1em;
+  font-size: 1.5em;
+}
+
+.post-form .user {
+  margin-left: 0.1em;
+}

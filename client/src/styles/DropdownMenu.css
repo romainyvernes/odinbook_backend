@@ -1,0 +1,17 @@
+.custom-dropdown .dropdown-toggle {
+  padding: 0;
+}
+
+.custom-dropdown .dropdown-toggle::after {
+  display: none;
+}
+
+.more-btn {
+  font-size: 2.3em;
+  padding: 0.2em;
+  border-radius: 50%;
+}
+
+.custom-dropdown .dropdown-menu {
+  margin-top: -0.1em;
+}

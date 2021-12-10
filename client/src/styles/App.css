@@ -1,0 +1,305 @@
+.App {
+  line-height: 1.2em;
+  height: 100vh;
+}
+
+.sm-display {
+  display: none;
+}
+
+/* default styling for select links on hover */
+.hovered-link:hover {
+  background: #f0f2f5;
+  border-radius: 7px;
+}
+
+.sidebar-link {
+  padding: 0.6em;
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+}
+
+.user-picture {
+  border-radius: 50%;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+.friend-picture {
+  border-radius: 10px;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+/******************
+  CONTAINER STYLING
+*******************/
+
+/* applies to posts */
+.primary-frame {
+  border-radius: 5px;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.2);
+  padding: 1em 1.3em;
+}
+
+/* applies to add comment and add post sections */
+.secondary-frame {
+  border-radius: 40px;
+  padding: 0.45em 1em;
+}
+
+/* applies to comments */
+.tertiary-frame {
+  border-radius: 20px;
+  padding: 0.7em 1em;
+}
+
+/* applies to dialog box for overlays */
+.quaternary-frame {
+  border-radius: 20px;
+  box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quinary-frame {
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+.senary-frame {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1em;
+}
+
+.septenary-frame {
+  border-radius: 7px;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+/*************
+  TEXT STYLING
+**************/
+
+.primary-font-color {
+  color: #1679ea;
+}
+
+/* applies to navigation links within profile, and buttons within posts */
+.secondary-font-color {
+  color: #777;
+}
+
+.tertiary-font-color {
+  color: #fff;
+}
+
+.light-bold {
+  font-weight: 600;
+}
+
+.regular-bold {
+  font-weight: 700;
+}
+
+.light-bold.btn {
+  font-weight: 600;
+}
+
+/*************
+  BACKGROUNDS
+**************/
+
+.primary-bg-color {
+  background-color: #fff;
+}
+
+.secondary-bg-color {
+  background-color: #f0f2f5;
+}
+
+.secondary-bg-color-hover:hover {
+  background-color: #e4e6eb;
+}
+
+.tertiary-bg-color {
+  background-color: #1679ea;
+}
+
+.overlay-bg.modal-backdrop.show {
+  background-color: #f5f5f5;
+  opacity: 0.8;
+}
+
+/*************
+  BUTTONS
+**************/
+
+button[type="submit"]:disabled {
+  background-color: #e4e6eb;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/*********
+  custom hamburger button with animation 
+***********/
+.burger-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.burger-icon {
+  width: 20px;
+  height: 3px;
+  background: #1679ea;
+  border-radius: 5px;
+  transition: all 0.5s ease-in-out;
+}
+
+.burger-icon::before,
+.burger-icon::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 3px;
+  background: #1679ea;
+  border-radius: 5px;
+  transition: all 0.5s ease-in-out;
+  left: 0;
+  right: 0;
+}
+
+.burger-icon::before {
+  transform: translateY(-7px);
+}
+
+.burger-icon::after {
+  transform: translateY(7px);
+}
+
+.burger-btn.open .burger-icon {
+  transform: translateX(-20px);
+  background: transparent;
+}
+
+.burger-btn.open .burger-icon::before {
+  transform: rotate(45deg) translate(10px, -10px);
+}
+
+.burger-btn.open .burger-icon::after {
+  transform: rotate(-45deg) translate(10px, 10px);
+}
+/************/
+
+/********************
+  BOOTSTRAP DROPDOWN MENU RESET
+*********************/
+
+.dropdown .btn.dropdown-toggle,
+.dropdown .btn.dropdown-toggle:hover,
+.dropdown .btn.dropdown-toggle:focus,
+.dropdown .btn.dropdown-toggle:active,
+.show.dropdown .btn.dropdown-toggle,
+.show.dropdown .btn.dropdown-toggle:hover,
+.show.dropdown .btn.dropdown-toggle:focus,
+.show.dropdown .btn.dropdown-toggle:active {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  box-shadow: none;
+}
+
+/********************
+  BOOTSTRAP MODAL
+*********************/
+
+.modal-dialog {
+  padding: 0 1em;
+}
+
+.modal-dialog .modal-content {
+  border: none;
+  height: 100%;
+}
+
+.modal-dialog.quaternary-frame {
+  margin-top: 70px;
+}
+
+.modal-dialog a:hover {
+  text-decoration: underline;
+}
+
+.modal-dialog .user {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+
+.modal-dialog .user-picture {
+  height: 40px;
+}
+
+.modal-body {
+  overflow: scroll;
+}
+
+.modal-title {
+  font-size: 1.5em;
+  margin-left: auto;
+}
+
+/********************
+  BOOTSTRAP SPINNER
+*********************/
+
+.spinner-border.text-primary {
+  margin: 1em auto 0 auto;
+  display: block;
+}
+
+
+/********************
+  NAVIGATION MENU
+*********************/
+
+.navigation-links {
+  display: flex;
+}
+
+.nav-link {
+  border: 3px solid #fff;
+  text-align: center;
+}
+
+/* override default styling for hovered links with rounder corners */
+.nav-link:hover {
+  border-radius: 10px;
+}
+
+/* applies to navigation links whose page is currently displayed */
+.selected {
+  border-width: 3px 0;
+  border-bottom-color: #1679ea;
+}
+
+/* cancel hovered link styling when link is matches page displayed */
+.selected.hovered-link {
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.no-data-msg {
+  margin: 1em 0;
+}
+
+@media screen and (max-width: 767px) {
+  .sm-display {
+    display: block;
+  }
+
+  .reg-display {
+    display: none;
+  }
+}

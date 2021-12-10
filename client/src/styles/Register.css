@@ -1,0 +1,13 @@
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.signup-form .signup-btn {
+  margin-top: 1em;
+  padding: 0.4em 4em;
+  font-weight: 900;
+  font-size: 1.1em;
+}
