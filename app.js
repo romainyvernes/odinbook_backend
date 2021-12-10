@@ -25,10 +25,10 @@ app.use(
         "img-src": [
           "'self'", 
           "romainodinbook.s3.us-west-2.amazonaws.com",
-          "blob",
-          "w3.org",
+          "data:",
           "odinbook-social.herokuapp.com"
-        ]
+        ],
+        "script-src": ["'unsafe-inline'"]
       }
     }
   })
