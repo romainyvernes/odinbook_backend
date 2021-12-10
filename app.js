@@ -26,6 +26,7 @@ app.use(
           "'self'", 
           "romainodinbook.s3.us-west-2.amazonaws.com",
           "data:",
+          "blob:",
           "odinbook-social.herokuapp.com"
         ]
       }

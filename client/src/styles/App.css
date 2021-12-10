@@ -214,10 +214,6 @@ button[type="submit"]:disabled {
   BOOTSTRAP MODAL
 *********************/
 
-.modal-dialog {
-  padding: 0 1em;
-}
-
 .modal-dialog .modal-content {
   border: none;
   height: 100%;

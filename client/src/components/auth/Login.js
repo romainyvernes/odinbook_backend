@@ -100,7 +100,7 @@ function Login({ auth, errors, login, history, enableSignupForm }) {
         <hr />
 
         <div className="signup-wrapper">
-          <Button className="signup-btn validation-btn" 
+          <Button className="signup-btn" 
                   variant="success" 
                   onClick={enableSignupForm}>
             Create new account
