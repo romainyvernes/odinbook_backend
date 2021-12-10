@@ -22,7 +22,7 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "img-src": ["'self'", "romainodinbook.s3.us-west-2.amazonaws.com"]
+        "img-src": null
       }
     }
   })
