@@ -25,7 +25,9 @@ app.use(
         "img-src": [
           "'self'", 
           "romainodinbook.s3.us-west-2.amazonaws.com",
-          "blob"
+          "blob",
+          "w3.org",
+          "odinbook-social.herokuapp.com"
         ]
       }
     }
