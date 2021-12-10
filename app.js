@@ -17,7 +17,16 @@ const connection = require('./config/database');
 
 var app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", "romainodinbook.s3.us-west-2.amazonaws.com"]
+      }
+    }
+  })
+);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
