@@ -27,8 +27,7 @@ app.use(
           "romainodinbook.s3.us-west-2.amazonaws.com",
           "data:",
           "odinbook-social.herokuapp.com"
-        ],
-        "script-src": ["'unsafe-inline'"]
+        ]
       }
     }
   })
