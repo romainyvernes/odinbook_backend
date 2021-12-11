@@ -12,12 +12,13 @@
 .friend-id-wrapper {
   display: flex;
   align-items: center;
+  gap: 1em;
 }
 
 .profile-friends .link-wrapper {
   height: 80px;
+  min-width: 80px;
   width: 80px;
-  margin-right: 1em;
 }
 
 .profile-friends .friend-picture {
@@ -28,6 +29,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1em
+}
+
+.profile-friends-list .btn {
+  white-space: nowrap;
 }
 
 @media screen and (max-width: 767px) {

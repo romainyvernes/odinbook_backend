@@ -7,11 +7,22 @@ import {
   DISABLE_SIGNUP_FORM,
   DISABLE_POST_FORM,
   DISABLE_REACTIONS_LIST,
+  CLEAR_ERRORS
 } from './types';
 import axios from 'axios';
 
 export const register = (body, history) => dispatch => {
   axios.post('/api/auth/register', body).then((response) => {
+    // delete potential errors stored in redux store
+    dispatch({
+      type: CLEAR_ERRORS
+    });
+
+    // close sign up form
+    dispatch({
+      type: DISABLE_SIGNUP_FORM
+    });
+
     // if successful, display success message with link to log in
     history.push('/');
   }).catch((err) => {
@@ -24,6 +35,11 @@ export const register = (body, history) => dispatch => {
 
 export const login = (body) => dispatch => {
   axios.post('/api/auth/login', body).then((response) => {
+    // delete potential errors stored in redux store
+    dispatch({
+      type: CLEAR_ERRORS
+    });
+
     dispatch({
       type: USER_LOGIN,
       payload: response.data
@@ -85,7 +101,7 @@ export const verifyAuth = () => dispatch => {
   });
 };
 
-export const deleteAccount = (username) => dispatch => {
+export const deleteAccount = (username, history) => dispatch => {
   axios.delete(`/api/users/${username}`).then((response) => {
     dispatch({
       type: USER_LOGOUT
@@ -98,6 +114,8 @@ export const deleteAccount = (username) => dispatch => {
     dispatch({
       type: RESET_COMMENTS
     });
+
+    history.push('/');
   }).catch((err) => {
     dispatch({
       type: GET_ERRORS,

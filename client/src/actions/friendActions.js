@@ -82,6 +82,15 @@ export const declineFriendRequest = (username, friendId) => dispatch => {
             type: DELETE_FRIEND_REQUEST,
             payload: friendId
           });
+
+          // store action in redux store to confirm above action was dispatched
+          dispatch({
+            type: GET_ACTION,
+            payload: {
+              type: DELETE_FRIEND_REQUEST,
+              payload: friendId
+            }
+          });
         }).catch((err) => {
           dispatch({
             type: GET_ERRORS,

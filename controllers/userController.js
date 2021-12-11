@@ -251,9 +251,10 @@ exports.search = (req, res, next) => {
 // POST add new friend (i.e., accept friend request)
 exports.friends_add = (req, res, next) => {
   // check first if the friend being added is not already a friend
-  User.findOne({ id_: req.user.id, friends: req.body.friendId })
+  User.findOne({ _id: req.user.id, friends: { $in: [req.body.friendId] } })
       .exec((err, user) => {
         if (err) return next(err);
+        console.log(user)
         if (user) return res.status(409).json("Users are already friends.");
 
         // proceed to update both authenticated user and friend
@@ -341,7 +342,7 @@ exports.friend_requests_get = (req, res, next) => {
 // POST send a friend request
 exports.friend_request_create = (req, res, next) => {
   // check first if the friend being added is not already a friend
-  User.findOne({ id_: req.user.id, friend_requests_sent: req.body.friendId })
+  User.findOne({ _id: req.user.id, friend_requests_sent: { $in: [req.body.friendId] } })
       .exec((err, user) => {
         if (err) return next(err);
         if (user) return res.status(409).json("Friend request already sent.");

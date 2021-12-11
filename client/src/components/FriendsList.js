@@ -24,7 +24,9 @@ function FriendsList({
 
   const dispatch = useDispatch();
   
+  // store global friends object locally as an array
   const [friendsArr, setFriendsArray] = useState([]);
+
   const loading = useRef(true);
   
   // store action object in redux state when component mounts to be able to
@@ -43,6 +45,10 @@ function FriendsList({
       dispatch({ type: CLEAR_ACTION });
     }
   }, [action]);
+
+  useEffect(() => {
+    setFriendsArray(Object.keys(friends).map((key) => friends[key]));
+  }, [friends])
   
   return (
     <>

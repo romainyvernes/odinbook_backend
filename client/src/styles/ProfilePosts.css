@@ -13,8 +13,8 @@
 .snapshot .friends ul {
   margin-top: 1em;
   display: grid;
-  align-items: end;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 125px));
+  gap: 1em;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .snapshot .friend-picture {
@@ -32,5 +32,9 @@
 @media screen and (max-width: 1023px) {
   .snapshot, .profile-posts {
     width: 100%;
+  }
+
+  .snapshot .friends ul {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 125px));
   }
 }

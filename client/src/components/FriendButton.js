@@ -60,31 +60,19 @@ function FriendButton({
 
   const renderFriendButton = () => {
     if (auth.user.id !== parent.id) {
-      if (friends[auth.user.id]) {
-        if (shortVersion !== true) {
-          return <Button onClick={handleDeleteFriend}>Unfriend</Button>;
-        } else {
-          return null;
-        }
-      } else if (auth.user.incomingFriendRequests[parent.id]) {
-        if (shortVersion !== true) {
-          return (
-            <>
-              <Button onClick={handleAcceptRequest}>Accept request</Button>
-              <Button onClick={handleDeclineRequest} className="reg-display">
-                Decline friend request
-              </Button>
-            </>
-          );
-        } else {
-          return null;
-        }
-      } else if (auth.user.outgoingFriendRequests[parent.id]) {
-        if (shortVersion !== true) {
-          return <Button onClick={handleCancelRequest}>Cancel request</Button>;
-        } else {
-          return null;
-        }
+      if (!shortVersion && friends[auth.user.id]) {
+        return <Button onClick={handleDeleteFriend}>Unfriend</Button>;
+      } else if (!shortVersion && auth.user.incomingFriendRequests[parent.id]) {
+        return (
+          <>
+            <Button onClick={handleAcceptRequest}>Accept request</Button>
+            <Button onClick={handleDeclineRequest} className="reg-display">
+              Decline friend request
+            </Button>
+          </>
+        );
+      } else if (!shortVersion && auth.user.outgoingFriendRequests[parent.id]) {
+        return <Button onClick={handleCancelRequest}>Cancel request</Button>;
       } else {
         return <Button onClick={handleAddFriend}>Add as friend</Button>;
       }

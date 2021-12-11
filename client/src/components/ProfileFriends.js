@@ -120,7 +120,11 @@ function ProfileFriends({
                       // authenticated user, and display an add friend button
                       // if listed user is not friends w/ authenticated user
                       friend.id !== auth.user.id
-                        ? !auth.user.friends[friend.id]
+                        ? (
+                               !auth.user.friends[friend.id] 
+                            && !auth.user.incomingFriendRequests[friend.id]
+                            && !auth.user.outgoingFriendRequests[friend.id]
+                          )
                             ? <FriendButton shortVersion={true} parent={friend} />
                             : <DropdownMenu items={getDropdownItems(friend)} />
                         : null

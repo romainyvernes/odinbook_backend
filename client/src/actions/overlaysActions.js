@@ -6,7 +6,8 @@ import {
   ENABLE_SIGNUP_FORM,
   DISABLE_SIGNUP_FORM,
   ENABLE_UPLOAD_PICTURE,
-  DISABLE_UPLOAD_PICTURE
+  DISABLE_UPLOAD_PICTURE,
+  CLEAR_ERRORS,
 } from "./types";
 
 export const enablePostForm = (post = {}, profile = {}) => dispatch => {
@@ -39,12 +40,22 @@ export const disableReactionsList = () => dispatch => {
 };
 
 export const enableSignupForm = () => dispatch => {
+  // delete potential errors stored in redux store
+  dispatch({
+    type: CLEAR_ERRORS
+  });
+  
   dispatch({
     type: ENABLE_SIGNUP_FORM
   });
 };
 
 export const disableSignupForm = () => dispatch => {
+  // delete potential errors stored in redux store
+  dispatch({
+    type: CLEAR_ERRORS
+  });
+  
   dispatch({
     type: DISABLE_SIGNUP_FORM
   });

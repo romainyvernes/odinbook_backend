@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -23,6 +24,7 @@ function AccountInfoItem({
   btnLabel,
   deleteAccount,
   auth,
+  history
 }) {
   const [showForm, setShowForm] = useState(false);
   const [formInput, setFormInput] = useState({});
@@ -167,7 +169,7 @@ function AccountInfoItem({
             <p>Are you sure you want to delete your account?</p>
             <div className="validation">
               <Button variant="danger" onClick={() => {
-                deleteAccount(auth.user.username);
+                deleteAccount(auth.user.username, history);
               }}>
                 Delete my account
               </Button>
@@ -230,4 +232,4 @@ const mapDispatchToProps = {
   deleteAccount,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountInfoItem);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AccountInfoItem));

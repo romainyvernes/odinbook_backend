@@ -148,8 +148,12 @@ Register.propTypes = {
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    errors: state.errors
+    errors: state.errors,
   };
 };
 
-export default connect(mapStateToProps, { register })(withRouter(Register));
+const mapDispatchToProps = {
+  register,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Register));

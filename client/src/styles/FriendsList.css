@@ -1,7 +1,9 @@
 .friends-list {
   display: grid;
-  grid-auto-columns: minmax(200px, 240px);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 200px));
+  gap: 1em;
+  overflow-x: scroll;
+  padding: 1em 0.1em;
 }
 
 .friends-list .bottom {

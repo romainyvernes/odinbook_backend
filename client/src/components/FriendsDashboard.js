@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // stylesheet
@@ -15,9 +15,12 @@ import {
   getFriends,
   getIncomingFriendRequests,
   deleteFriend,
-  addFriend,
+  addFriendToAuth,
   declineFriendRequest,
 } from '../actions/friendActions';
+
+// react action types
+import { DELETE_FRIEND } from '../actions/types';
 
 // react components
 import FriendsList from './FriendsList';
@@ -31,16 +34,27 @@ function FriendsDashboard({
   getFriends,
   getIncomingFriendRequests,
   deleteFriend,
-  addFriend,
+  addFriendToAuth,
   declineFriendRequest,
+  errors,
 }) {
+
+  const dispatch = useDispatch();
 
   const handleAddFriend = (parentId) => {
     const body = {
       friendId: parentId
     };
     
-    addFriend(body, auth.user.username);
+    addFriendToAuth(body, auth.user.username);
+
+    dispatch({
+      type: DELETE_FRIEND,
+      payload: {
+        userId: auth.user.id,
+        friendId: parentId
+      }
+    });
   };
 
   const handleDeleteFriend = (parentId) => {
@@ -49,6 +63,14 @@ function FriendsDashboard({
 
   const handleDeclineRequest = (parentId) => {
     declineFriendRequest(auth.user.username, parentId);
+
+    dispatch({
+      type: DELETE_FRIEND,
+      payload: {
+        userId: auth.user.id,
+        friendId: parentId
+      }
+    });
   };
 
   const navItems = [
@@ -125,13 +147,15 @@ FriendsDashboard.propTypes = {
   getFriends: PropTypes.func.isRequired,
   getIncomingFriendRequests: PropTypes.func.isRequired,
   deleteFriend: PropTypes.func.isRequired,
-  addFriend: PropTypes.func.isRequired,
+  addFriendToAuth: PropTypes.func.isRequired,
   declineFriendRequest: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
+    errors: state.errors,
+    action: state.action
   };
 };
 
@@ -139,7 +163,7 @@ const mapDispatchToProps = {
   getFriends,
   getIncomingFriendRequests,
   deleteFriend,
-  addFriend,
+  addFriendToAuth,
   declineFriendRequest,
 };
 
