@@ -84,7 +84,7 @@ Back-end part of a MERN application that recreates some of the main features of 
 
 #### Comments
 - ##### GET /api/comments (*query required)
-  *Query arguments: parentId (list of comments with given parent comment) (*has precedence over below query)*
+  *Query arguments: parentId (list of comments with given parent comment) (has precedence over below query)*
   
   *Query arguments: postId (list of all comments for a given post)*
 - ##### POST /api/comments (add a new comment for a given post/comment on given user profile)
