@@ -26,6 +26,8 @@ Back-end part of a MERN application that recreates some of the main features of 
 ### Preview
 [Live App](https://odinbook-social.herokuapp.com/)
 
+![Odinbook](https://user-images.githubusercontent.com/65140547/145942680-55819a3a-a52d-4525-a7f6-17d681f8d26d.png)
+
 ### More
 [Link to frontend](https://github.com/romainyvernes/odinbook_frontend)
 
