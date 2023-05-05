@@ -9,7 +9,8 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "serverstart": "DEBUG=facebook:* npm run devstart",
-    "build": "cd client && npm install && npm run build"
+    "build": "cd client && npm install && npm run build",
+    "deploy": "npm install && node ./bin/www"
   },
   "dependencies": {
     "aws-sdk": "^2.1039.0",
