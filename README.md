@@ -24,7 +24,7 @@ Back-end part of a MERN application that recreates some of the main features of 
  - Passport.JS (authentication)
 
 ### Preview
-[Live App](https://odinbook-social.herokuapp.com/)
+[Live App](https://odinbook-boqn.onrender.com)
 
 ### More
 [Link to frontend](https://github.com/romainyvernes/odinbook_frontend)
