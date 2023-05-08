@@ -95,3 +95,7 @@ Back-end part of a MERN application that recreates some of the main features of 
   *Body arguments: { content }*
 - ##### DELETE /api/comments/:commentId (delete a comment)
 
+### Deployment
+1. Add repo to selected server.
+2. Add environment variables within server interface.
+3. Configure `build` and `deploy` scripts in server interface.
