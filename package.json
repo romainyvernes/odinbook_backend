@@ -37,6 +37,7 @@
     "socket.io": "^4.4.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.2.11",
     "nodemon": "^2.0.13"
   }
 }
