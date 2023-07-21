@@ -24,7 +24,7 @@ Back-end part of a MERN application that recreates some of the main features of 
  - Passport.JS (authentication)
 
 ### Preview
-[Live App](https://odinbook-boqn.onrender.com)
+[Live App](https://wispy-night-906.fly.dev)
 
 ![Odinbook](https://user-images.githubusercontent.com/65140547/145942680-55819a3a-a52d-4525-a7f6-17d681f8d26d.png)
 
